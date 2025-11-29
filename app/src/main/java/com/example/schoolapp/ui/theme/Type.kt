@@ -2,14 +2,22 @@ package com.example.schoolapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.schoolapp.R
+
+val FunnelSans = FontFamily(
+    Font(R.font.font, weight = FontWeight.W400),  // normal weight
+    Font(R.font.font_italic, weight = FontWeight.W400, style = FontStyle.Italic)
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = FunnelSans,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
