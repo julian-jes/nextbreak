@@ -48,20 +48,20 @@ fun MainScreen() {
             .background(Color(0xFF121212))
     ) {
         Text(
-            text = "Title",
+            text = "Next Break",
             color = Color(0xFFf0c184),
-            fontSize = 70.sp,
+            fontSize = 60.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 10.dp)
+                .padding(top = 30.dp)
                 .statusBarsPadding()
         )
         Box (
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(top = 100.dp, bottom = 150.dp),
+                .padding(top = 100.dp, bottom = 170.dp),
         ) {
             Column(
                 modifier = Modifier
@@ -85,9 +85,9 @@ fun MainScreen() {
                 )
             }
             Text(
-                text = "60 school days left",
+                text = "Next day off in 4 days",
                 color = Color(0xFF374045),
-                fontSize = 30.sp,
+                fontSize = 25.sp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 10.dp)
@@ -97,7 +97,7 @@ fun MainScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .height(150.dp)
+                .height(170.dp)
                 .background(Color(0xFF212121))
         ) {
             Column (
@@ -111,20 +111,20 @@ fun MainScreen() {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "80%",
+                    text = "60 school days left",
                     color = Color(0xFFd89216),
-                    fontSize = 32.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                 )
 
-                Spacer(modifier = Modifier.weight(0.4f))
+                Spacer(modifier = Modifier.weight(0.8f))
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
                         .padding(horizontal = 16.dp)
-                        .height(20.dp)
+                        .height(30.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color(0xFF404040))
                 ) {
@@ -137,6 +137,13 @@ fun MainScreen() {
                         strokeCap = StrokeCap.Butt,
                         modifier = Modifier
                             .fillMaxSize()
+                    )
+                    Text(
+                        text = "85%",
+                        color = Color(0xFFf0c184),
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
