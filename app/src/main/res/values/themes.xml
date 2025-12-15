@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.SchoolApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.SchoolApp" parent="Theme.Material3.Light.NoActionBar" />
+    <style name="Theme.SchoolApp.Splash" parent="Theme.SplashScreen">
+        <!-- Background color of the splash screen -->
+        <item name="windowSplashScreenBackground">#121212</item>
+
+        <!-- Icon shown in the center -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <!-- Optional: background behind the icon -->
+        <item name="windowSplashScreenIconBackgroundColor">#121212</item>
+
+        <!-- Theme after splash screen -->
+        <item name="postSplashScreenTheme">@style/Theme.SchoolApp</item>
+    </style>
 </resources>

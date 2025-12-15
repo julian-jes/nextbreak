@@ -50,7 +50,7 @@ fun MainScreen() {
         Text(
             text = "Next Break",
             color = Color(0xFFf0c184),
-            fontSize = 60.sp,
+            fontSize = 55.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -86,7 +86,7 @@ fun MainScreen() {
             }
             Text(
                 text = "Next day off in 4 days",
-                color = Color(0xFF374045),
+                color = Color(0xFF404040),
                 fontSize = 25.sp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
