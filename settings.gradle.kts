@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "School App"
+rootProject.name = "Next Break"
 include(":app")
