@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.schoolapp"
+    namespace = "com.julianjesacher.nextbreak"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.schoolapp"
+        applicationId = "com.julianjesacher.nextbreak"
         minSdk = 30
         targetSdk = 36
         versionCode = 1

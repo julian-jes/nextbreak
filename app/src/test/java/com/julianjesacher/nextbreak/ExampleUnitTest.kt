@@ -1,4 +1,4 @@
-package com.example.schoolapp
+package com.julianjesacher.nextbreak
 
 import org.junit.Test
 

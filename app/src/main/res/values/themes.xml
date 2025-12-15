@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.SchoolApp" parent="Theme.Material3.Light.NoActionBar" />
-    <style name="Theme.SchoolApp.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.NextBreak" parent="Theme.Material3.Light.NoActionBar" />
+    <style name="Theme.NextBreak.Splash" parent="Theme.SplashScreen">
         <!-- Background color of the splash screen -->
         <item name="windowSplashScreenBackground">#121212</item>
 
@@ -13,6 +13,6 @@
         <item name="windowSplashScreenIconBackgroundColor">#121212</item>
 
         <!-- Theme after splash screen -->
-        <item name="postSplashScreenTheme">@style/Theme.SchoolApp</item>
+        <item name="postSplashScreenTheme">@style/Theme.NextBreak</item>
     </style>
 </resources>
