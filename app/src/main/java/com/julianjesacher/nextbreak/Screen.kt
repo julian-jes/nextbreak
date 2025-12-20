@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,17 +29,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowInsetsControllerCompat
+import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 
 @Composable
 fun MainScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
             text = "Next Break",
-            color = Color(0xFFf0c184),
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 55.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -61,13 +63,13 @@ fun MainScreen() {
             ) {
                 Text(
                     text = "39",
-                    color = Color(0xFFd89216),
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 100.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "school days until\nwinter break",
-                    color = Color(0xFFf0c184),
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 30.sp,
                     lineHeight = 35.sp,
                     textAlign = TextAlign.Center
@@ -75,7 +77,7 @@ fun MainScreen() {
             }
             Text(
                 text = "Next day off in 4 days",
-                color = Color(0xFF404040),
+                color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 25.sp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -87,7 +89,7 @@ fun MainScreen() {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .height(170.dp)
-                .background(Color(0xFF212121))
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             Column (
                 modifier = Modifier
@@ -101,7 +103,7 @@ fun MainScreen() {
 
                 Text(
                     text = "60 school days left",
-                    color = Color(0xFFd89216),
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -115,12 +117,12 @@ fun MainScreen() {
                         .padding(horizontal = 16.dp)
                         .height(30.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF404040))
+                        .background(MaterialTheme.colorScheme.tertiary)
                 ) {
                     LinearProgressIndicator(
                         progress = { 0.8f },
                         trackColor = Color.Transparent,
-                        color = Color(0xFFd89216),
+                        color = MaterialTheme.colorScheme.primary,
                         gapSize = 0.dp,
                         drawStopIndicator = {},
                         strokeCap = StrokeCap.Butt,
@@ -129,7 +131,7 @@ fun MainScreen() {
                     )
                     Text(
                         text = "85%",
-                        color = Color(0xFFf0c184),
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.Center)
@@ -160,5 +162,7 @@ fun SystemBars() {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen()
+    NextBreakTheme {
+        MainScreen()
+    }
 }
