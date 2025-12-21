@@ -1,4 +1,4 @@
-package com.julianjesacher.nextbreak
+package com.julianjesacher.nextbreak.ui
 
 import android.app.Activity
 import androidx.compose.foundation.background
@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +35,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel : MainViewModel) {
+
+    val daysUntilHolidays by viewModel.daysUntilHolidaysDisplay.collectAsState()
+    val nextDayOff by viewModel.nextDayOffDisplay.collectAsState()
+    val schoolDaysLeft by viewModel.schoolDaysLeftDisplay.collectAsState()
+    val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +71,7 @@ fun MainScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "39",
+                    text = daysUntilHolidays,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 100.sp,
                     fontWeight = FontWeight.Bold
@@ -76,7 +85,7 @@ fun MainScreen() {
                 )
             }
             Text(
-                text = "Next day off in 4 days",
+                text = "Next day off in $nextDayOff days",
                 color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 25.sp,
                 modifier = Modifier
@@ -102,7 +111,7 @@ fun MainScreen() {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "60 school days left",
+                    text = "$schoolDaysLeft school days left",
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
@@ -120,7 +129,7 @@ fun MainScreen() {
                         .background(MaterialTheme.colorScheme.tertiary)
                 ) {
                     LinearProgressIndicator(
-                        progress = { 0.8f },
+                        progress = { schoolYearProgress },
                         trackColor = Color.Transparent,
                         color = MaterialTheme.colorScheme.primary,
                         gapSize = 0.dp,
@@ -130,7 +139,7 @@ fun MainScreen() {
                             .fillMaxSize()
                     )
                     Text(
-                        text = "85%",
+                        text = "${(schoolYearProgress * 100).toInt()}%",
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
@@ -163,6 +172,6 @@ fun SystemBars() {
 @Composable
 fun MainScreenPreview() {
     NextBreakTheme {
-        MainScreen()
+        MainScreen(MainViewModel())
     }
 }
