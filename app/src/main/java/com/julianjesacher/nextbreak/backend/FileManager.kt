@@ -40,4 +40,15 @@ object FileManager {
             }
         }
     }
+
+    suspend fun deleteFile(fileName: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                val file = File(context.filesDir, fileName)
+                file.exists() && file.delete()
+            } catch (e: Exception) {
+                Log.e("File Manager", "Error while deleting $fileName : $e")
+            }
+        }
+    }
 }

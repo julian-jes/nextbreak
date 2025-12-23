@@ -1,6 +1,7 @@
 package com.julianjesacher.nextbreak.backend
 
 import com.google.gson.Gson
+import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.model.Version
 import okio.IOException
 import retrofit2.HttpException
@@ -48,11 +49,11 @@ object VersionRepository {
         }
 
         val jsonString = Gson().toJson(newestVersion)
-        FileManager.saveFile("version.json", jsonString)
+        FileManager.saveFile(AppConstants.VERSION_FILE_NAME, jsonString)
     }
 
     private suspend fun getLocalVersion(): Version? {
-        val jsonString = FileManager.loadFile("version.json")
+        val jsonString = FileManager.loadFile(AppConstants.VERSION_FILE_NAME)
         if(jsonString != null) {
             return Gson().fromJson(jsonString, Version::class.java)
         }
