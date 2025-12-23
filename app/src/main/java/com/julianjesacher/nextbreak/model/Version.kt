@@ -1,6 +1,11 @@
 package com.julianjesacher.nextbreak.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Version(
-    val year: String,
-    val hotfix: String
+    @SerializedName("year")
+    val year: Int,
+
+    @SerializedName("hotfix")
+    val hotfix: Int
 )
