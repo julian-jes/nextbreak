@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowInsetsControllerCompat
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun MainScreen(viewModel : MainViewModel) {
@@ -139,7 +140,7 @@ fun MainScreen(viewModel : MainViewModel) {
                             .fillMaxSize()
                     )
                     Text(
-                        text = "${(schoolYearProgress * 100).toInt()}%",
+                        text = "${(schoolYearProgress * 100).roundToInt()}%",
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,

@@ -10,6 +10,7 @@ import com.julianjesacher.nextbreak.backend.DownloadCalendarResult
 import com.julianjesacher.nextbreak.backend.FileManager
 import com.julianjesacher.nextbreak.backend.VersionRepository
 import com.julianjesacher.nextbreak.config.AppConstants
+import com.julianjesacher.nextbreak.model.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,22 +23,22 @@ import kotlinx.coroutines.launch
 const val TAG = "CustomTestLogs"
 
 class MainViewModel : ViewModel(){
-    private var _daysUntilHolidays = MutableStateFlow(7)
+    private var _daysUntilHolidays = MutableStateFlow(-1)
     val daysUntilHolidaysDisplay: StateFlow<String> = _daysUntilHolidays
         .map { if (it == -1) "–" else it.toString() }
         .stateIn(viewModelScope, SharingStarted.Lazily, "–")
 
-    private var _nextDayOff = MutableStateFlow(3)
+    private var _nextDayOff = MutableStateFlow(-1)
     val nextDayOffDisplay: StateFlow<String> = _nextDayOff
         .map { if (it == -1) "–" else it.toString() }
         .stateIn(viewModelScope, SharingStarted.Lazily, "–")
 
-    private var _schoolDaysLeft = MutableStateFlow(70)
+    private var _schoolDaysLeft = MutableStateFlow(-1)
     val schoolDaysLeftDisplay: StateFlow<String> = _schoolDaysLeft
         .map { if (it == -1) "–" else it.toString() }
         .stateIn(viewModelScope, SharingStarted.Lazily, "–")
 
-    private var _schoolYearProgress = MutableStateFlow(0.7f)
+    private var _schoolYearProgress = MutableStateFlow(0f)
     val schoolYearProgressDisplay = _schoolYearProgress.asStateFlow()
 
     fun loadData(){
@@ -46,8 +47,7 @@ class MainViewModel : ViewModel(){
             val calendar = CalendarRepository.getLocalCalendar()
             if(calendar != null) {
                 Log.d(TAG, "Loaded local calendar successfully: $calendar")
-                _nextDayOff.value = CalendarCalculator.daysUntilNextDayOff(calendar)
-                _daysUntilHolidays.value = CalendarCalculator.daysUntilHolidays(calendar)
+                setCalendarUI(calendar)
             }
 
             when (val result = VersionRepository.checkVersion()) {
@@ -73,12 +73,23 @@ class MainViewModel : ViewModel(){
                             }
                             is DownloadCalendarResult.Success -> {
                                 Log.d(TAG, "Calendar download successful, calendar: ${result.calendar}")
+                                VersionRepository.saveVersionLocally()
+                                setCalendarUI(result.calendar)
                             }
                         }
-                        VersionRepository.saveVersionLocally()
                     }
                 }
             }
         }
+    }
+
+    private fun setCalendarUI(calendar: Calendar) {
+        if(CalendarCalculator.isOffDay(calendar)) {
+            return
+        }
+        _nextDayOff.value = CalendarCalculator.daysUntilNextDayOff(calendar)
+        _daysUntilHolidays.value = CalendarCalculator.daysUntilHolidays(calendar)
+        _schoolDaysLeft.value = CalendarCalculator.schoolDaysLeft(calendar)
+        _schoolYearProgress.value = CalendarCalculator.schoolYearProgress(calendar)
     }
 }
