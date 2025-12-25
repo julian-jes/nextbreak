@@ -67,7 +67,7 @@ object CalendarCalculator {
     }
 
     private fun nextHolidayStart(calendar: Calendar): String {
-        val currentDate = LocalDate.now()
+        val currentDate = LocalDate.parse("2025-12-22")//LocalDate.now()
 
         if (currentDate.isBefore(LocalDate.parse(calendar.autumnBreakStart))) {
             return calendar.autumnBreakStart
@@ -102,7 +102,7 @@ object CalendarCalculator {
     }
 
     private fun currentDayIndex(calendar: Calendar): Int {
-        val currentDate = LocalDate.now().toString()
+        val currentDate = "2025-12-22"//LocalDate.now().toString()
         return calendar.calendar.indexOfFirst {
             it.date == currentDate
         }
