@@ -13,6 +13,17 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,8 +50,9 @@ import kotlin.math.roundToInt
 fun MainScreen(viewModel : MainViewModel) {
 
     val daysUntilHolidays by viewModel.daysUntilHolidaysDisplay.collectAsState()
-    val nextDayOff by viewModel.nextDayOffDisplay.collectAsState()
-    val schoolDaysLeft by viewModel.schoolDaysLeftDisplay.collectAsState()
+    val daysUntilHolidaysText by viewModel.daysUntilHolidaysTextDisplay.collectAsState()
+    val nextDayOff by viewModel.nextDayOffTextDisplay.collectAsState()
+    val schoolDaysLeft by viewModel.schoolDaysLeftTextDisplay.collectAsState()
     val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
 
     Box(
@@ -78,7 +90,7 @@ fun MainScreen(viewModel : MainViewModel) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "school days until\nwinter break",
+                    text = daysUntilHolidaysText,
                     color = MaterialTheme.colorScheme.secondary,
                     fontSize = 30.sp,
                     lineHeight = 35.sp,
@@ -86,7 +98,7 @@ fun MainScreen(viewModel : MainViewModel) {
                 )
             }
             Text(
-                text = "Next day off in $nextDayOff days",
+                text = nextDayOff,
                 color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 25.sp,
                 modifier = Modifier
@@ -112,7 +124,7 @@ fun MainScreen(viewModel : MainViewModel) {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    text = "$schoolDaysLeft school days left",
+                    text = schoolDaysLeft,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
@@ -176,3 +188,11 @@ fun MainScreenPreview() {
         MainScreen(MainViewModel())
     }
 }
+
+/* Icons:
+Source code: Icons.Default.Code
+Info: Icons.Default.Info
+Reload: Icons.Default.Refresh
+Feedback: Icons.Default.Feedback
+OpenInNew: Icons.AutoMirrored.Filled.OpenInNew
+ */

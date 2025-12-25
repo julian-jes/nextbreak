@@ -38,7 +38,7 @@ object CalendarRepository {
         }
     }
 
-    suspend fun getLocalCalendar(): Calendar? {
+    suspend fun loadLocalCalendar(): Calendar? {
         val jsonString = FileManager.loadFile(AppConstants.CALENDAR_FILE_NAME)
         if(jsonString == null) {
             return null

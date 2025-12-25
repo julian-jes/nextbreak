@@ -11,7 +11,7 @@ object CalendarCalculator {
     fun daysUntilNextDayOff(calendar: Calendar): Int {
         val startIndex = currentDayIndex(calendar)
         var days = 0
-        for(i in startIndex..calendar.calendar.size) {
+        for(i in startIndex..< calendar.calendar.size) {
             if (!calendar.calendar[i].isSchoolDay) {
                 break
             }
@@ -25,7 +25,7 @@ object CalendarCalculator {
         val holidayStart = nextHolidayStart(calendar)
         var days = 0
 
-        for(i in startIndex..calendar.calendar.size) {
+        for(i in startIndex..< calendar.calendar.size) {
             if(calendar.calendar[i].date == holidayStart) {
                 break
             }
@@ -83,6 +83,17 @@ object CalendarCalculator {
         }
 
         return summerBreakStart(calendar)
+    }
+
+    fun holidayName(calendar: Calendar): String {
+        val holidayStart = nextHolidayStart(calendar)
+        return when(holidayStart) {
+            calendar.autumnBreakStart -> "autumn"
+            calendar.winterBreakStart -> "winter"
+            calendar.carnivalBreakStart -> "carnival"
+            calendar.easterBreakStart -> "easter"
+            else -> "summer"
+        }
     }
 
     private fun summerBreakStart(calendar: Calendar): String {
