@@ -9,7 +9,9 @@ import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.julianjesacher.nextbreak.backend.FileManager
+import com.julianjesacher.nextbreak.ui.DayOffScreen
 import com.julianjesacher.nextbreak.ui.MainScreen
+import com.julianjesacher.nextbreak.ui.NextBreakApp
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 import com.julianjesacher.nextbreak.ui.SystemBars
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
@@ -27,7 +29,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             NextBreakTheme {
                 SystemBars()
-                MainScreen(viewModel)
+                //MainScreen(viewModel)
+                NextBreakApp(viewModel)
             }
         }
         viewModel.loadData()

@@ -37,6 +37,9 @@ class MainViewModel : ViewModel(){
     private var _schoolYearProgress = MutableStateFlow(0f)
     val schoolYearProgressDisplay = _schoolYearProgress.asStateFlow()
 
+    private var _isSchoolDay = MutableStateFlow(true)
+    val isSchoolDay = _isSchoolDay.asStateFlow()
+
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
             loadLocalCalendar()
@@ -89,6 +92,7 @@ class MainViewModel : ViewModel(){
 
     private fun setCalendarUI(calendar: Calendar) {
         if(CalendarCalculator.isOffDay(calendar)) {
+            _isSchoolDay.value = false
             return
         }
 
@@ -112,7 +116,7 @@ class MainViewModel : ViewModel(){
             _schoolDaysLeftText.value = "$schoolDaysLeft school day left"
         }
         else {
-            _schoolDaysLeftText.value = "$schoolDaysLeft schools day left"
+            _schoolDaysLeftText.value = "$schoolDaysLeft school days left"
         }
 
         _schoolYearProgress.value = CalendarCalculator.schoolYearProgress(calendar)
