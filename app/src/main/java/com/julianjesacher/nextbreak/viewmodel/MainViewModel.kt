@@ -40,6 +40,9 @@ class MainViewModel : ViewModel(){
     private var _isSchoolDay = MutableStateFlow(true)
     val isSchoolDay = _isSchoolDay.asStateFlow()
 
+    var _infoWindow = MutableStateFlow(false)
+    val infoWindow = _infoWindow.asStateFlow()
+
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
             loadLocalCalendar()

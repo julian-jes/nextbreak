@@ -38,10 +38,13 @@ fun MainScreen(
     daysUntilHolidaysText: String,
     nextDayOff: String,
     schoolDaysLeft: String,
-    schoolYearProgress: Float
+    schoolYearProgress: Float,
+    viewModel: MainViewModel
     ) {
 
-    BaseScreen {
+    BaseScreen(
+      onInfoClick = {viewModel._infoWindow.value = true}
+    ) {
         Box (
             modifier = Modifier
                 .fillMaxSize()
@@ -145,7 +148,9 @@ fun MainScreenPreview() {
             daysUntilHolidaysText = "school days until\nwinter break",
             nextDayOff = "Next day off in 2 day",
             schoolDaysLeft = "20 school days left",
-            schoolYearProgress = 0.8f)
+            schoolYearProgress = 0.8f,
+            viewModel = MainViewModel()
+        )
     }
 }
 

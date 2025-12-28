@@ -19,7 +19,7 @@ fun NextBreakApp(viewModel: MainViewModel) {
 
     val isSchoolDay by viewModel.isSchoolDay.collectAsState()
     if(isSchoolDay) {
-        MainScreen(daysUntilHolidays, daysUntilHolidaysText, nextDayOff, schoolDaysLeft, schoolYearProgress)
+        MainScreen(daysUntilHolidays, daysUntilHolidaysText, nextDayOff, schoolDaysLeft, schoolYearProgress, viewModel)
     } else {
         DayOffScreen()
     }

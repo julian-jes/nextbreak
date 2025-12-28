@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun BaseScreen(content: @Composable BoxScope.() -> Unit) {
+fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +56,7 @@ fun BaseScreen(content: @Composable BoxScope.() -> Unit) {
                     modifier = Modifier.size(32.dp)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = onInfoClick) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,

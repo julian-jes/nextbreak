@@ -23,7 +23,9 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 
 @Composable
 fun DayOffScreen() {
-    BaseScreen {
+    BaseScreen(
+        onInfoClick = {}
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

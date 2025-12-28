@@ -6,10 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.julianjesacher.nextbreak.backend.FileManager
 import com.julianjesacher.nextbreak.ui.DayOffScreen
+import com.julianjesacher.nextbreak.ui.InfoWindow
 import com.julianjesacher.nextbreak.ui.MainScreen
 import com.julianjesacher.nextbreak.ui.NextBreakApp
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
@@ -28,9 +31,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NextBreakTheme {
+                val infoWindow by viewModel.infoWindow.collectAsState()
                 SystemBars()
-                //MainScreen(viewModel)
                 NextBreakApp(viewModel)
+                if(infoWindow) {
+                    InfoWindow(viewModel)
+                }
             }
         }
         viewModel.loadData()
