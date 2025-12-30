@@ -24,8 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
+import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
 fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit) {
@@ -69,7 +72,7 @@ fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit
             text = "Next Break",
             color = MaterialTheme.colorScheme.secondary,
             fontSize = 55.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 50.dp)
@@ -82,5 +85,15 @@ fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit
                 .padding(top = 120.dp),
             content = content
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BaseScreenPreview() {
+    NextBreakTheme {
+        BaseScreen(
+            onInfoClick = {}
+        ) { }
     }
 }

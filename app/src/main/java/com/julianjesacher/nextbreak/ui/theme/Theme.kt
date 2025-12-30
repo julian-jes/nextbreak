@@ -16,7 +16,8 @@ private val AppColorScheme = darkColorScheme(
 
     primary = ContentPrimary,
     secondary = ContentSecondary,
-    tertiary = ContentTertiary
+    tertiary = ContentTertiary,
+    tertiaryContainer = ContentTertiaryContainer
 )
 
 @Composable
