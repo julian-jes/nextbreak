@@ -1,10 +1,8 @@
 package com.julianjesacher.nextbreak.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
@@ -18,9 +16,16 @@ fun NextBreakApp(viewModel: MainViewModel) {
     val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
 
     val isSchoolDay by viewModel.isSchoolDay.collectAsState()
+    val isInfoDialogOpen by viewModel.isInfoDialogOpen.collectAsState()
+    val appVersionText by viewModel.appVersionText.collectAsState()
+
     if(isSchoolDay) {
-        MainScreen(daysUntilHolidays, daysUntilHolidaysText, nextDayOff, schoolDaysLeft, schoolYearProgress, viewModel)
+        MainScreen(viewModel, daysUntilHolidays, daysUntilHolidaysText, nextDayOff, schoolDaysLeft, schoolYearProgress)
     } else {
-        DayOffScreen()
+        DayOffScreen(viewModel)
+    }
+
+    if(isInfoDialogOpen) {
+        InfoDialog(viewModel, appVersionText)
     }
 }

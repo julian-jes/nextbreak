@@ -52,7 +52,7 @@ object VersionRepository {
         FileManager.saveFile(AppConstants.VERSION_FILE_NAME, jsonString)
     }
 
-    private suspend fun getLocalVersion(): Version? {
+    suspend fun getLocalVersion(): Version? {
         val jsonString = FileManager.loadFile(AppConstants.VERSION_FILE_NAME)
         if(jsonString != null) {
             return Gson().fromJson(jsonString, Version::class.java)

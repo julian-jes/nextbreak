@@ -20,11 +20,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
+import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
-fun DayOffScreen() {
+fun DayOffScreen(viewModel: MainViewModel) {
     BaseScreen(
-        onInfoClick = {}
+        onInfoClick = {
+            viewModel.setInfoDialog(true)
+        }
     ) {
         Column(
             modifier = Modifier
@@ -58,6 +61,6 @@ fun DayOffScreen() {
 @Composable
 fun DayOffScreenPreview() {
     NextBreakTheme {
-        DayOffScreen()
+        //DayOffScreen(MainViewModel())
     }
 }

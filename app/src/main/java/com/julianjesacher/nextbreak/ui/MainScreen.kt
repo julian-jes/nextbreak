@@ -34,16 +34,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun MainScreen(
+    viewModel: MainViewModel,
     daysUntilHolidays: String,
     daysUntilHolidaysText: String,
     nextDayOff: String,
     schoolDaysLeft: String,
-    schoolYearProgress: Float,
-    viewModel: MainViewModel
+    schoolYearProgress: Float
     ) {
 
     BaseScreen(
-      onInfoClick = {viewModel._infoWindow.value = true}
+      onInfoClick = {
+          viewModel.setInfoDialog(true)
+      }
     ) {
         Box (
             modifier = Modifier
@@ -143,14 +145,14 @@ fun MainScreen(
 @Composable
 fun MainScreenPreview() {
     NextBreakTheme {
-        MainScreen(
+        /*MainScreen(
             daysUntilHolidays = "4",
             daysUntilHolidaysText = "school days until\nwinter break",
             nextDayOff = "Next day off in 2 day",
             schoolDaysLeft = "20 school days left",
             schoolYearProgress = 0.8f,
             viewModel = MainViewModel()
-        )
+        )*/
     }
 }
 

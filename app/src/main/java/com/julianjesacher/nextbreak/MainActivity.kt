@@ -28,12 +28,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NextBreakTheme {
-                val infoWindow by viewModel.infoWindow.collectAsState()
                 SystemBars()
                 NextBreakApp(viewModel)
-                if(infoWindow) {
-                    InfoDialog(viewModel)
-                }
             }
         }
         viewModel.loadData()

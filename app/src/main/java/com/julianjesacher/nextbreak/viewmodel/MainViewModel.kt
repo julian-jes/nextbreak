@@ -1,7 +1,8 @@
 package com.julianjesacher.nextbreak.viewmodel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.julianjesacher.nextbreak.backend.CalendarCalculator
 import com.julianjesacher.nextbreak.backend.CalendarRepository
@@ -10,6 +11,7 @@ import com.julianjesacher.nextbreak.backend.DownloadCalendarResult
 import com.julianjesacher.nextbreak.backend.VersionRepository
 import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.model.Calendar
+import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +21,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel(){
+class MainViewModel(application: Application) : AndroidViewModel(application){
+
+    private val appContext = getApplication<Application>()
+
     private var _daysUntilHolidays = MutableStateFlow(-1)
     val daysUntilHolidaysDisplay: StateFlow<String> = _daysUntilHolidays
         .map { if (it == -1) "–" else it.toString() }
@@ -40,8 +45,15 @@ class MainViewModel : ViewModel(){
     private var _isSchoolDay = MutableStateFlow(true)
     val isSchoolDay = _isSchoolDay.asStateFlow()
 
-    var _infoWindow = MutableStateFlow(false)
-    val infoWindow = _infoWindow.asStateFlow()
+    private var _isInfoDialogOpen = MutableStateFlow(false)
+    val isInfoDialogOpen = _isInfoDialogOpen.asStateFlow()
+
+    private var _appVersionText = MutableStateFlow("")
+    val appVersionText = _appVersionText.asStateFlow()
+
+    fun setInfoDialog(isOpen: Boolean) {
+        _isInfoDialogOpen.value = isOpen
+    }
 
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -53,8 +65,21 @@ class MainViewModel : ViewModel(){
 
                 VersionRepository.saveVersionLocally()
                 setCalendarUI(calendar)
+                updateVersionInfo()
             }
         }
+    }
+
+    private suspend fun updateVersionInfo() {
+        val appVersion = AppVersionUtils.getAppVersion(appContext)
+        val dataVersion = VersionRepository.getLocalVersion()
+
+        var dataVersionText = "-"
+        if(dataVersion != null) {
+            dataVersionText = "${dataVersion.year}.${dataVersion.hotfix}"
+        }
+
+        _appVersionText.value = "v.$appVersion ($dataVersionText)"
     }
 
     private suspend fun loadLocalCalendar() {
@@ -62,6 +87,7 @@ class MainViewModel : ViewModel(){
         if(calendar != null) {
             Log.d(AppConstants.LOG_TAG, "Loaded local calendar successfully: $calendar")
             setCalendarUI(calendar)
+            updateVersionInfo()
         }
     }
 
