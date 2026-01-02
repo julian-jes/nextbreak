@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
-import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
 fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit) {

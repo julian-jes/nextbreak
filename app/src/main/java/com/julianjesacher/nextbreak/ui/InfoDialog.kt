@@ -1,5 +1,7 @@
 package com.julianjesacher.nextbreak.ui
 
+import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +37,7 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
-fun InfoDialog(viewModel: MainViewModel, appVersionText: String) {
+fun InfoDialog(viewModel: MainViewModel) {
     Dialog(onDismissRequest = {
         viewModel.setInfoDialog(false)
     }) {
@@ -45,13 +49,16 @@ fun InfoDialog(viewModel: MainViewModel, appVersionText: String) {
                 .widthIn(max = 560.dp)
 
         ) {
-            InfoDialogContent(viewModel, appVersionText)
+            InfoDialogContent(viewModel)
         }
     }
 }
 
 @Composable
-fun InfoDialogContent(viewModel: MainViewModel, appVersionLabel: String) {
+fun InfoDialogContent(viewModel: MainViewModel) {
+
+    val appVersionText by viewModel.appVersionText.collectAsState()
+
     Box(
         modifier = Modifier
             .padding(0.dp)
@@ -91,17 +98,26 @@ fun InfoDialogContent(viewModel: MainViewModel, appVersionLabel: String) {
         )
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = appVersionLabel,
+            text = appVersionText,
             fontSize = 18.sp,
             fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.tertiaryContainer
         )
         Spacer(modifier = Modifier.height(20.dp))
-        OpenUrlButton("Send feedback", Icons.Default.Feedback, AppConstants.FEEDBACK_URL)
-        OpenUrlButton("View source code", Icons.Default.Code, AppConstants.SOURCE_CODE_URL)
+        OpenUrlButton(
+            text = "Send feedback",
+            icon = Icons.Default.Feedback,
+            url = viewModel.generateFeedbackUrl()
+        )
+        OpenUrlButton(
+            text = "View source code",
+            icon = Icons.Default.Code,
+            url = AppConstants.SOURCE_CODE_URL
+        )
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun InfoWindowPreview() {
@@ -114,7 +130,7 @@ fun InfoWindowPreview() {
                 .padding(16.dp)
 
         ) {
-            //InfoDialogContent(MainViewModel())
+            InfoDialogContent(MainViewModel(Application()))
         }
 
     }

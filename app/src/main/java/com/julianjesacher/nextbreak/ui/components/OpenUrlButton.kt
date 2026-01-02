@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import androidx.core.net.toUri
+import com.julianjesacher.nextbreak.config.AppConstants
 
 @Composable
 fun OpenUrlButton(

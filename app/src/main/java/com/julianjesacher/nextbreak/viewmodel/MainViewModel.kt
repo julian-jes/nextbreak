@@ -1,6 +1,7 @@
 package com.julianjesacher.nextbreak.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,12 +52,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _appVersionText = MutableStateFlow("")
     val appVersionText = _appVersionText.asStateFlow()
 
+    private var _showLoadingOverlay = MutableStateFlow(false)
+    val showLoadingOverlay = _showLoadingOverlay.asStateFlow()
+
     fun setInfoDialog(isOpen: Boolean) {
         _isInfoDialogOpen.value = isOpen
     }
 
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
+            _showLoadingOverlay.value = true
             loadLocalCalendar()
 
             val result = checkVersion() ?: return@launch
@@ -67,7 +72,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                 setCalendarUI(calendar)
                 updateVersionInfo()
             }
+
+            _showLoadingOverlay.value = false
         }
+    }
+
+    fun generateFeedbackUrl(): String {
+        return "${AppConstants.FEEDBACK_BASE_URL}${AppConstants.FEEDBACK_ENTRY}${Uri.encode(_appVersionText.value)}"
     }
 
     private suspend fun updateVersionInfo() {
@@ -94,10 +105,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private suspend fun downloadCalendar(): Calendar? {
         return when (val result = CalendarRepository.downloadCalendar()) {
             DownloadCalendarResult.Error -> {
+                _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar, error happened!")
                 null
             }
             DownloadCalendarResult.NoInternet -> {
+                _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar no internet!")
                 null
             }
@@ -108,10 +121,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private suspend fun checkVersion(): CheckVersionResult.Success? {
         return when (val result = VersionRepository.checkVersion()) {
             CheckVersionResult.Error -> {
+                _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, error happened!")
                 null
             }
             CheckVersionResult.NoInternet -> {
+                _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, no internet!")
                 null
             }

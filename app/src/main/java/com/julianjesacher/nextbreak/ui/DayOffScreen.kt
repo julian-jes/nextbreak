@@ -1,14 +1,13 @@
 package com.julianjesacher.nextbreak.ui
 
+import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,10 +56,11 @@ fun DayOffScreen(viewModel: MainViewModel) {
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun DayOffScreenPreview() {
     NextBreakTheme {
-        //DayOffScreen(MainViewModel())
+        DayOffScreen(MainViewModel(Application()))
     }
 }

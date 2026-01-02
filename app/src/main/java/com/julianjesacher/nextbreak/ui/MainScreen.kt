@@ -1,5 +1,7 @@
 package com.julianjesacher.nextbreak.ui
 
+import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,14 +35,13 @@ import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 import kotlin.math.roundToInt
 
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel,
-    daysUntilHolidays: String,
-    daysUntilHolidaysText: String,
-    nextDayOff: String,
-    schoolDaysLeft: String,
-    schoolYearProgress: Float
-    ) {
+fun MainScreen(viewModel: MainViewModel) {
+
+    val daysUntilHolidays by viewModel.daysUntilHolidaysDisplay.collectAsState()
+    val daysUntilHolidaysText by viewModel.daysUntilHolidaysTextDisplay.collectAsState()
+    val nextDayOff by viewModel.nextDayOffTextDisplay.collectAsState()
+    val schoolDaysLeft by viewModel.schoolDaysLeftTextDisplay.collectAsState()
+    val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
 
     BaseScreen(
       onInfoClick = {
@@ -141,25 +142,11 @@ fun MainScreen(
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     NextBreakTheme {
-        /*MainScreen(
-            daysUntilHolidays = "4",
-            daysUntilHolidaysText = "school days until\nwinter break",
-            nextDayOff = "Next day off in 2 day",
-            schoolDaysLeft = "20 school days left",
-            schoolYearProgress = 0.8f,
-            viewModel = MainViewModel()
-        )*/
+        MainScreen(MainViewModel(Application()))
     }
 }
-
-/* Icons:
-Source code: Icons.Default.Code
-Info: Icons.Default.Info
-Reload: Icons.Default.Refresh
-Feedback: Icons.Default.Feedback
-OpenInNew: Icons.AutoMirrored.Filled.OpenInNew
- */
