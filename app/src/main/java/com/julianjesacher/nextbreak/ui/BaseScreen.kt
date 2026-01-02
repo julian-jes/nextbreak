@@ -30,7 +30,12 @@ import androidx.compose.ui.unit.sp
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 
 @Composable
-fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit) {
+fun BaseScreen(
+    onInfoClick: () -> Unit,
+    onRetryClick: () -> Unit,
+    retryButtonText: String?,
+    content: @Composable BoxScope.() -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -44,19 +49,21 @@ fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = {}) {
-                Text(
-                    text = "No Internet",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 21.sp
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
+            if(retryButtonText != null) {
+                TextButton(onClick = onRetryClick) {
+                    Text(
+                        text = retryButtonText,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 21.sp
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
             IconButton(onClick = onInfoClick) {
                 Icon(
@@ -92,7 +99,9 @@ fun BaseScreen(onInfoClick: () -> Unit, content: @Composable BoxScope.() -> Unit
 fun BaseScreenPreview() {
     NextBreakTheme {
         BaseScreen(
-            onInfoClick = {}
+            onInfoClick = {},
+            onRetryClick = {},
+            retryButtonText = "No Internet"
         ) { }
     }
 }

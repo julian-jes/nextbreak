@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,11 +43,16 @@ fun MainScreen(viewModel: MainViewModel) {
     val nextDayOff by viewModel.nextDayOffTextDisplay.collectAsState()
     val schoolDaysLeft by viewModel.schoolDaysLeftTextDisplay.collectAsState()
     val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
+    val retryButtonText by viewModel.retryButtonText.collectAsState()
 
     BaseScreen(
-      onInfoClick = {
-          viewModel.setInfoDialog(true)
-      }
+        onInfoClick = {
+            viewModel.setInfoDialog(true)
+        },
+        onRetryClick = {
+            viewModel.retryLoadingOnlineData()
+        },
+        retryButtonText = retryButtonText
     ) {
         Box (
             modifier = Modifier

@@ -1,8 +1,10 @@
 package com.julianjesacher.nextbreak.backend
 
+import android.content.Context
 import com.google.gson.Gson
 import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.model.Version
+import com.julianjesacher.nextbreak.utils.ConnectivityChecker
 import okio.IOException
 import retrofit2.HttpException
 
@@ -15,11 +17,16 @@ sealed class CheckVersionResult {
 object VersionRepository {
     private var newestVersion: Version? = null
 
-    suspend fun checkVersion(): CheckVersionResult {
+    suspend fun checkVersion(context: Context): CheckVersionResult {
         val response = try {
             RetrofitInstance.api.getVersion()
         } catch (e: IOException) {
-            return CheckVersionResult.NoInternet
+            return if(ConnectivityChecker.hasInternetConnection(context)) {
+                CheckVersionResult.Error
+            }
+            else {
+                CheckVersionResult.NoInternet
+            }
         } catch (e: HttpException) {
             return CheckVersionResult.Error
         }

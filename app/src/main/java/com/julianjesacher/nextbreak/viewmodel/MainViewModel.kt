@@ -13,6 +13,7 @@ import com.julianjesacher.nextbreak.backend.VersionRepository
 import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.model.Calendar
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
+import com.julianjesacher.nextbreak.utils.ConnectivityChecker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,6 +56,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _showLoadingOverlay = MutableStateFlow(false)
     val showLoadingOverlay = _showLoadingOverlay.asStateFlow()
 
+    private var _retryButtonText: MutableStateFlow<String?> = MutableStateFlow(null)
+    val retryButtonText = _retryButtonText.asStateFlow()
+
     fun setInfoDialog(isOpen: Boolean) {
         _isInfoDialogOpen.value = isOpen
     }
@@ -63,22 +67,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         viewModelScope.launch(Dispatchers.IO) {
             _showLoadingOverlay.value = true
             loadLocalCalendar()
+            loadOnlineData()
+            _showLoadingOverlay.value = false
+        }
+    }
 
-            val result = checkVersion() ?: return@launch
-            if(result.updateAvailable) {
-                val calendar = downloadCalendar() ?: return@launch
-
-                VersionRepository.saveVersionLocally()
-                setCalendarUI(calendar)
-                updateVersionInfo()
-            }
-
+    fun retryLoadingOnlineData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _showLoadingOverlay.value = true
+            loadOnlineData()
             _showLoadingOverlay.value = false
         }
     }
 
     fun generateFeedbackUrl(): String {
         return "${AppConstants.FEEDBACK_BASE_URL}${AppConstants.FEEDBACK_ENTRY}${Uri.encode(_appVersionText.value)}"
+    }
+
+    private suspend fun loadOnlineData() {
+        val result = checkVersion() ?: return
+
+        if(result.updateAvailable) {
+            val calendar = downloadCalendar() ?: return
+
+            VersionRepository.saveVersionLocally()
+            setCalendarUI(calendar)
+            updateVersionInfo()
+        }
     }
 
     private suspend fun updateVersionInfo() {
@@ -96,41 +111,50 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private suspend fun loadLocalCalendar() {
         val calendar = CalendarRepository.loadLocalCalendar()
         if(calendar != null) {
-            Log.d(AppConstants.LOG_TAG, "Loaded local calendar successfully: $calendar")
             setCalendarUI(calendar)
             updateVersionInfo()
         }
     }
 
     private suspend fun downloadCalendar(): Calendar? {
-        return when (val result = CalendarRepository.downloadCalendar()) {
+        return when (val result = CalendarRepository.downloadCalendar(appContext)) {
             DownloadCalendarResult.Error -> {
+                _retryButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar, error happened!")
                 null
             }
             DownloadCalendarResult.NoInternet -> {
+                _retryButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar no internet!")
                 null
             }
-            is DownloadCalendarResult.Success -> result.calendar
+            is DownloadCalendarResult.Success -> {
+                _retryButtonText.value = null
+                result.calendar
+            }
         }
     }
 
     private suspend fun checkVersion(): CheckVersionResult.Success? {
-        return when (val result = VersionRepository.checkVersion()) {
+        return when (val result = VersionRepository.checkVersion(appContext)) {
             CheckVersionResult.Error -> {
+                _retryButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, error happened!")
                 null
             }
             CheckVersionResult.NoInternet -> {
+                _retryButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, no internet!")
                 null
             }
-            is CheckVersionResult.Success -> result
+            is CheckVersionResult.Success -> {
+                _retryButtonText.value = null
+                result
+            }
         }
     }
 
