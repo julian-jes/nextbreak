@@ -13,7 +13,6 @@ import com.julianjesacher.nextbreak.backend.VersionRepository
 import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.model.Calendar
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
-import com.julianjesacher.nextbreak.utils.ConnectivityChecker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -68,6 +67,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
+            updateVersionInfo()
             val loadedLocalCalendar = loadLocalCalendar()
             loadOnlineData(!loadedLocalCalendar)
         }

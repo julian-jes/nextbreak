@@ -7,7 +7,7 @@
         <item name="windowSplashScreenBackground">#121212</item>
 
         <!-- Icon shown in the center -->
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon_splash</item>
 
         <!-- Optional: background behind the icon -->
         <item name="windowSplashScreenIconBackgroundColor">#121212</item>
