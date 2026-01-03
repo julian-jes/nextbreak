@@ -33,7 +33,7 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 fun BaseScreen(
     onInfoClick: () -> Unit,
     onRetryClick: () -> Unit,
-    retryButtonText: String?,
+    refreshButtonText: String?,
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
@@ -49,10 +49,10 @@ fun BaseScreen(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if(retryButtonText != null) {
+            if(refreshButtonText != null) {
                 TextButton(onClick = onRetryClick) {
                     Text(
-                        text = retryButtonText,
+                        text = refreshButtonText,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 21.sp
                     )
@@ -101,7 +101,7 @@ fun BaseScreenPreview() {
         BaseScreen(
             onInfoClick = {},
             onRetryClick = {},
-            retryButtonText = "No Internet"
+            refreshButtonText = "No Internet"
         ) { }
     }
 }

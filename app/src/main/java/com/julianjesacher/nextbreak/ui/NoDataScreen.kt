@@ -24,7 +24,7 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 @Composable
-fun DayOffScreen(viewModel: MainViewModel) {
+fun NoDataScreen(viewModel: MainViewModel) {
 
     val refreshButtonText by viewModel.refreshButtonText.collectAsState()
 
@@ -46,7 +46,7 @@ fun DayOffScreen(viewModel: MainViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "No school\ntoday!",
+                text = "No data available",
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 55.sp,
                 lineHeight = 60.sp,
@@ -55,7 +55,7 @@ fun DayOffScreen(viewModel: MainViewModel) {
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Relax, bro.",
+                text = "Unable to load data.\nPlease try again.",
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 30.sp,
                 lineHeight = 35.sp,
@@ -68,8 +68,8 @@ fun DayOffScreen(viewModel: MainViewModel) {
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
-fun DayOffScreenPreview() {
+fun NoDataScreenPreview() {
     NextBreakTheme {
-        DayOffScreen(MainViewModel(Application()))
+        NoDataScreen(MainViewModel(Application()))
     }
 }

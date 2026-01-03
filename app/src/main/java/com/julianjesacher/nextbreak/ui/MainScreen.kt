@@ -43,7 +43,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val nextDayOff by viewModel.nextDayOffTextDisplay.collectAsState()
     val schoolDaysLeft by viewModel.schoolDaysLeftTextDisplay.collectAsState()
     val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
-    val retryButtonText by viewModel.retryButtonText.collectAsState()
+    val refreshButtonText by viewModel.refreshButtonText.collectAsState()
 
     BaseScreen(
         onInfoClick = {
@@ -52,7 +52,7 @@ fun MainScreen(viewModel: MainViewModel) {
         onRetryClick = {
             viewModel.retryLoadingOnlineData()
         },
-        retryButtonText = retryButtonText
+        refreshButtonText = refreshButtonText
     ) {
         Box (
             modifier = Modifier

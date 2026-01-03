@@ -56,8 +56,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _showLoadingOverlay = MutableStateFlow(false)
     val showLoadingOverlay = _showLoadingOverlay.asStateFlow()
 
-    private var _retryButtonText: MutableStateFlow<String?> = MutableStateFlow(null)
-    val retryButtonText = _retryButtonText.asStateFlow()
+    private var _refreshButtonText: MutableStateFlow<String?> = MutableStateFlow(null)
+    val refreshButtonText = _refreshButtonText.asStateFlow()
+
+    private var _showNoDataScreen = MutableStateFlow(false)
+    val showNoDataScreen = _showNoDataScreen.asStateFlow()
 
     fun setInfoDialog(isOpen: Boolean) {
         _isInfoDialogOpen.value = isOpen
@@ -65,18 +68,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     fun loadData(){
         viewModelScope.launch(Dispatchers.IO) {
-            _showLoadingOverlay.value = true
-            loadLocalCalendar()
-            loadOnlineData()
-            _showLoadingOverlay.value = false
+            val loadedLocalCalendar = loadLocalCalendar()
+            loadOnlineData(!loadedLocalCalendar)
         }
     }
 
     fun retryLoadingOnlineData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _showLoadingOverlay.value = true
-            loadOnlineData()
-            _showLoadingOverlay.value = false
+            loadOnlineData(true)
         }
     }
 
@@ -84,16 +83,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         return "${AppConstants.FEEDBACK_BASE_URL}${AppConstants.FEEDBACK_ENTRY}${Uri.encode(_appVersionText.value)}"
     }
 
-    private suspend fun loadOnlineData() {
+    private suspend fun loadOnlineData(loadingOverlayAtStart: Boolean) {
+        if(loadingOverlayAtStart) _showLoadingOverlay.value = true
+
         val result = checkVersion() ?: return
 
         if(result.updateAvailable) {
+            _showLoadingOverlay.value = true
             val calendar = downloadCalendar() ?: return
 
             VersionRepository.saveVersionLocally()
             setCalendarUI(calendar)
             updateVersionInfo()
         }
+
+        _showLoadingOverlay.value = false
     }
 
     private suspend fun updateVersionInfo() {
@@ -108,30 +112,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         _appVersionText.value = "v.$appVersion ($dataVersionText)"
     }
 
-    private suspend fun loadLocalCalendar() {
+    private suspend fun loadLocalCalendar(): Boolean {
+        _showLoadingOverlay.value = true
         val calendar = CalendarRepository.loadLocalCalendar()
+
         if(calendar != null) {
             setCalendarUI(calendar)
             updateVersionInfo()
+            _showLoadingOverlay.value = false
+            return true
         }
+
+        _showNoDataScreen.value = true
+        _showLoadingOverlay.value = false
+        return false
     }
 
     private suspend fun downloadCalendar(): Calendar? {
         return when (val result = CalendarRepository.downloadCalendar(appContext)) {
             DownloadCalendarResult.Error -> {
-                _retryButtonText.value = "Network Error"
+                _refreshButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar, error happened!")
                 null
             }
             DownloadCalendarResult.NoInternet -> {
-                _retryButtonText.value = "No Internet"
+                _refreshButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error downloading calendar no internet!")
                 null
             }
             is DownloadCalendarResult.Success -> {
-                _retryButtonText.value = null
+                _refreshButtonText.value = null
                 result.calendar
             }
         }
@@ -140,25 +152,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private suspend fun checkVersion(): CheckVersionResult.Success? {
         return when (val result = VersionRepository.checkVersion(appContext)) {
             CheckVersionResult.Error -> {
-                _retryButtonText.value = "Network Error"
+                _refreshButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, error happened!")
                 null
             }
             CheckVersionResult.NoInternet -> {
-                _retryButtonText.value = "No Internet"
+                _refreshButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
                 Log.e(AppConstants.LOG_TAG, "Error checking version, no internet!")
                 null
             }
             is CheckVersionResult.Success -> {
-                _retryButtonText.value = null
+                _refreshButtonText.value = null
                 result
             }
         }
     }
 
     private fun setCalendarUI(calendar: Calendar) {
+
+        _showNoDataScreen.value = false
+
         if(CalendarCalculator.isOffDay(calendar)) {
             _isSchoolDay.value = false
             return
