@@ -108,7 +108,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             dataVersionText = "${dataVersion.year}.${dataVersion.hotfix}"
         }
 
-        _appVersionText.value = "v.$appVersion ($dataVersionText)"
+        _appVersionText.value = "v$appVersion ($dataVersionText)"
     }
 
     private suspend fun loadLocalCalendar(): Boolean {
