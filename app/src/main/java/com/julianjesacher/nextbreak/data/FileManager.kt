@@ -8,16 +8,16 @@ import okio.IOException
 import java.io.File
 
 object FileManager {
-    private lateinit var context: Context
+    private lateinit var rootDir: File
 
     fun init(appContext: Context) {
-        context = appContext.applicationContext
+        rootDir = appContext.applicationContext.filesDir
     }
 
     suspend fun saveFile(fileName: String, content: String){
         withContext(Dispatchers.IO) {
             try {
-                val file = File(context.filesDir, fileName)
+                val file = File(rootDir, fileName)
                 file.writeText(content)
             } catch (e: IOException) {
                 Log.e("File Manager", "Error while saving $fileName : $e")
@@ -28,7 +28,7 @@ object FileManager {
     suspend fun loadFile(fileName: String): String? {
         return withContext(Dispatchers.IO) {
             try {
-                val file = File(context.filesDir, fileName)
+                val file = File(rootDir, fileName)
                 if(file.exists()) {
                     file.readText()
                 } else {

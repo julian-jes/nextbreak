@@ -15,33 +15,27 @@ import com.julianjesacher.nextbreak.models.Calendar
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val appContext = getApplication<Application>()
 
-    private var _daysUntilHolidays = MutableStateFlow(-1)
-    val daysUntilHolidaysDisplay: StateFlow<String> = _daysUntilHolidays
-        .map { if (it == -1) "–" else it.toString() }
-        .stateIn(viewModelScope, SharingStarted.Lazily, "–")
+    private var _daysUntilHolidays = MutableStateFlow("-")
+    val daysUntilHolidays = _daysUntilHolidays.asStateFlow()
 
     private var _daysUntilHolidaysText = MutableStateFlow("")
-    val daysUntilHolidaysTextDisplay = _daysUntilHolidaysText.asStateFlow()
+    val daysUntilHolidaysText = _daysUntilHolidaysText.asStateFlow()
 
     private var _nextDayOffText = MutableStateFlow("-")
-    val nextDayOffTextDisplay = _nextDayOffText.asStateFlow()
+    val nextDayOffText = _nextDayOffText.asStateFlow()
 
     private var _schoolDaysLeftText = MutableStateFlow("-")
-    val schoolDaysLeftTextDisplay = _schoolDaysLeftText.asStateFlow()
+    val schoolDaysLeftText = _schoolDaysLeftText.asStateFlow()
 
     private var _schoolYearProgress = MutableStateFlow(0f)
-    val schoolYearProgressDisplay = _schoolYearProgress.asStateFlow()
+    val schoolYearProgress = _schoolYearProgress.asStateFlow()
 
     private var _isSchoolDay = MutableStateFlow(true)
     val isSchoolDay = _isSchoolDay.asStateFlow()
@@ -69,7 +63,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         viewModelScope.launch(Dispatchers.IO) {
             updateVersionInfo()
             val loadedLocalCalendar = loadLocalCalendar()
-            loadOnlineData(!loadedLocalCalendar)
+            val errorWhileLoading = loadOnlineData(!loadedLocalCalendar)
+
+            if(!loadedLocalCalendar && errorWhileLoading) {
+                _showNoDataScreen.value = true
+            }
         }
     }
 
@@ -83,14 +81,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         return "${AppConstants.FEEDBACK_BASE_URL}${AppConstants.FEEDBACK_ENTRY}${Uri.encode(_appVersionText.value)}"
     }
 
-    private suspend fun loadOnlineData(loadingOverlayAtStart: Boolean) {
+    private suspend fun loadOnlineData(loadingOverlayAtStart: Boolean): Boolean {
         if(loadingOverlayAtStart) _showLoadingOverlay.value = true
 
-        val result = checkVersion() ?: return
+        val result = checkVersion() ?: return true
 
         if(result.updateAvailable) {
             _showLoadingOverlay.value = true
-            val calendar = downloadCalendar() ?: return
+            val calendar = downloadCalendar() ?: return true
 
             VersionRepository.saveVersionLocally()
             setCalendarUI(calendar)
@@ -98,6 +96,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         }
 
         _showLoadingOverlay.value = false
+        return false
     }
 
     private suspend fun updateVersionInfo() {
@@ -123,7 +122,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             return true
         }
 
-        _showNoDataScreen.value = true
         _showLoadingOverlay.value = false
         return false
     }
@@ -170,7 +168,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         }
     }
 
-    private fun setCalendarUI(calendar: Calendar) {
+    private suspend fun setCalendarUI(calendar: Calendar) {
+
+        if(CalendarCalculator.isCalendarToOld()) {
+            _showNoDataScreen.value = true
+            return
+        }
 
         _showNoDataScreen.value = false
 
@@ -186,10 +189,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         else {
             _nextDayOffText.value = "Next day off in $nextDayOff days"
         }
-        _daysUntilHolidays.value = CalendarCalculator.daysUntilHolidays(calendar)
+
+        _daysUntilHolidays.value = CalendarCalculator.daysUntilHolidays(calendar).toString()
         var holidaysUnit = "days"
         val holidayName = CalendarCalculator.holidayName(calendar)
-        if(_daysUntilHolidays.value == 1) {
+        if(_daysUntilHolidays.value.toInt() == 1) {
             holidaysUnit = "day"
         }
         _daysUntilHolidaysText.value = "school $holidaysUnit until\n$holidayName break"

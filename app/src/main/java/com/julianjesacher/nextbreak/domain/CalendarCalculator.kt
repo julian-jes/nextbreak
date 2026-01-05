@@ -1,5 +1,6 @@
 package com.julianjesacher.nextbreak.domain
 
+import com.julianjesacher.nextbreak.data.VersionRepository
 import com.julianjesacher.nextbreak.models.Calendar
 import java.time.LocalDate
 
@@ -83,6 +84,13 @@ object CalendarCalculator {
         }
 
         return summerBreakStart(calendar)
+    }
+
+    suspend fun isCalendarToOld(): Boolean {
+        val currentDate = LocalDate.now()
+        val version = VersionRepository.getLocalVersion() ?: return false
+
+        return currentDate.monthValue >= 9 && currentDate.year > version.year
     }
 
     fun holidayName(calendar: Calendar): String {

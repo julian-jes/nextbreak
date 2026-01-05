@@ -37,11 +37,11 @@ import kotlin.math.roundToInt
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
-    val daysUntilHolidays by viewModel.daysUntilHolidaysDisplay.collectAsState()
-    val daysUntilHolidaysText by viewModel.daysUntilHolidaysTextDisplay.collectAsState()
-    val nextDayOff by viewModel.nextDayOffTextDisplay.collectAsState()
-    val schoolDaysLeft by viewModel.schoolDaysLeftTextDisplay.collectAsState()
-    val schoolYearProgress by viewModel.schoolYearProgressDisplay.collectAsState()
+    val daysUntilHolidays by viewModel.daysUntilHolidays.collectAsState()
+    val daysUntilHolidaysText by viewModel.daysUntilHolidaysText.collectAsState()
+    val nextDayOff by viewModel.nextDayOffText.collectAsState()
+    val schoolDaysLeft by viewModel.schoolDaysLeftText.collectAsState()
+    val schoolYearProgress by viewModel.schoolYearProgress.collectAsState()
     val refreshButtonText by viewModel.refreshButtonText.collectAsState()
 
     BaseScreen(
