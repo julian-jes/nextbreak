@@ -5,13 +5,13 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.julianjesacher.nextbreak.backend.CalendarCalculator
-import com.julianjesacher.nextbreak.backend.CalendarRepository
-import com.julianjesacher.nextbreak.backend.CheckVersionResult
-import com.julianjesacher.nextbreak.backend.DownloadCalendarResult
-import com.julianjesacher.nextbreak.backend.VersionRepository
+import com.julianjesacher.nextbreak.domain.CalendarCalculator
+import com.julianjesacher.nextbreak.data.CalendarRepository
+import com.julianjesacher.nextbreak.data.CheckVersionResult
+import com.julianjesacher.nextbreak.data.DownloadCalendarResult
+import com.julianjesacher.nextbreak.data.VersionRepository
 import com.julianjesacher.nextbreak.config.AppConstants
-import com.julianjesacher.nextbreak.model.Calendar
+import com.julianjesacher.nextbreak.models.Calendar
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,8 +46,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _isSchoolDay = MutableStateFlow(true)
     val isSchoolDay = _isSchoolDay.asStateFlow()
 
-    private var _isInfoDialogOpen = MutableStateFlow(false)
-    val isInfoDialogOpen = _isInfoDialogOpen.asStateFlow()
+    private var _isAboutDialogOpen = MutableStateFlow(false)
+    val isAboutDialogOpen = _isAboutDialogOpen.asStateFlow()
 
     private var _appVersionText = MutableStateFlow("")
     val appVersionText = _appVersionText.asStateFlow()
@@ -61,8 +61,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _showNoDataScreen = MutableStateFlow(false)
     val showNoDataScreen = _showNoDataScreen.asStateFlow()
 
-    fun setInfoDialog(isOpen: Boolean) {
-        _isInfoDialogOpen.value = isOpen
+    fun setAboutDialog(isOpen: Boolean) {
+        _isAboutDialogOpen.value = isOpen
     }
 
     fun loadData(){

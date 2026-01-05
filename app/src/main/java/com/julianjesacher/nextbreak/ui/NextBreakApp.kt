@@ -10,7 +10,7 @@ import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 fun NextBreakApp(viewModel: MainViewModel) {
 
     val isSchoolDay by viewModel.isSchoolDay.collectAsState()
-    val isInfoDialogOpen by viewModel.isInfoDialogOpen.collectAsState()
+    val isAboutDialogOpen by viewModel.isAboutDialogOpen.collectAsState()
     val showLoadingOverlay by viewModel.showLoadingOverlay.collectAsState()
     val showNoDataScreen by viewModel.showNoDataScreen.collectAsState()
 
@@ -25,8 +25,8 @@ fun NextBreakApp(viewModel: MainViewModel) {
         }
     }
 
-    if(isInfoDialogOpen) {
-        InfoDialog(viewModel)
+    if(isAboutDialogOpen) {
+        AboutDialog(viewModel)
     }
 
     LoadingOverlay(showLoadingOverlay)

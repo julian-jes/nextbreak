@@ -46,7 +46,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
     BaseScreen(
         onInfoClick = {
-            viewModel.setInfoDialog(true)
+            viewModel.setAboutDialog(true)
         },
         onRetryClick = {
             viewModel.retryLoadingOnlineData()
