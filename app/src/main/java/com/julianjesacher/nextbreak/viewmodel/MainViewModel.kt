@@ -5,12 +5,12 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.julianjesacher.nextbreak.domain.CalendarCalculator
+import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.data.CalendarRepository
 import com.julianjesacher.nextbreak.data.CheckVersionResult
 import com.julianjesacher.nextbreak.data.DownloadCalendarResult
 import com.julianjesacher.nextbreak.data.VersionRepository
-import com.julianjesacher.nextbreak.config.AppConstants
+import com.julianjesacher.nextbreak.domain.CalendarCalculator
 import com.julianjesacher.nextbreak.models.Calendar
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import kotlinx.coroutines.Dispatchers

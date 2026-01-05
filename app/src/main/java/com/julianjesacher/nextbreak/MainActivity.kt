@@ -9,9 +9,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.ui.NextBreakApp
-import com.julianjesacher.nextbreak.viewmodel.MainViewModel
-import com.julianjesacher.nextbreak.ui.SystemBars
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
+import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -19,13 +18,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         FileManager.init(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        enableEdgeToEdge()
         setContent {
             NextBreakTheme {
-                SystemBars()
                 NextBreakApp(viewModel)
             }
         }

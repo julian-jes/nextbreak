@@ -1,17 +1,13 @@
 package com.julianjesacher.nextbreak.ui.components
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,9 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import androidx.core.net.toUri
-import com.julianjesacher.nextbreak.config.AppConstants
+import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 
 @Composable
 fun OpenUrlButton(
