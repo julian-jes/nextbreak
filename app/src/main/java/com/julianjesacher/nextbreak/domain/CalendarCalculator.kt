@@ -6,7 +6,8 @@ import java.time.LocalDate
 
 object CalendarCalculator {
     fun isOffDay(calendar: Calendar): Boolean {
-        return !calendar.calendar[currentDayIndex(calendar)].isSchoolDay
+        val index = currentDayIndex(calendar)
+        return index == -1 || !calendar.calendar[index].isSchoolDay
     }
 
     fun daysUntilNextDayOff(calendar: Calendar): Int {

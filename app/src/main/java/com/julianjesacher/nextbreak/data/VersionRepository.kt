@@ -18,6 +18,7 @@ object VersionRepository {
     private var newestVersion: Version? = null
 
     suspend fun checkVersion(context: Context): CheckVersionResult {
+
         val response = try {
             RetrofitInstance.api.getVersion()
         } catch (e: IOException) {
@@ -69,13 +70,6 @@ object VersionRepository {
     }
 
     private fun isNewerVersion(localVersion: Version, onlineVersion: Version): Boolean {
-        if(onlineVersion.year > localVersion.year) {
-            return true
-        }
-        if(onlineVersion.hotfix > localVersion.hotfix) {
-            return true
-        }
-
-        return false
+        return onlineVersion != localVersion
     }
 }
