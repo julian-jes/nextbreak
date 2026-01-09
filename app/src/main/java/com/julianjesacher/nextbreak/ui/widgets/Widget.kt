@@ -2,6 +2,7 @@ package com.julianjesacher.nextbreak.ui.widgets
 
 import android.content.Context
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -19,6 +20,7 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import com.julianjesacher.nextbreak.MainActivity
 import com.julianjesacher.nextbreak.R
 import com.julianjesacher.nextbreak.data.CalendarRepository
@@ -37,12 +39,17 @@ object Widget: GlanceAppWidget() {
         FileManager.init(context)
 
         val calendar = CalendarRepository.loadLocalCalendar()
-        var daysUntilHolidays = "-"
-        var schoolDaysLeft = "-"
+        var daysUntilHolidays = 0
+        var schoolDaysLeft = 0
+        var isCalendarToOld = false
 
         if(calendar != null) {
-            daysUntilHolidays = CalendarCalculator.daysUntilHolidays(calendar).toString()
-            schoolDaysLeft = CalendarCalculator.schoolDaysLeft(calendar).toString()
+            isCalendarToOld = CalendarCalculator.isCalendarToOld()
+
+            if(!CalendarCalculator.isOffDay(calendar)) {
+                daysUntilHolidays = CalendarCalculator.daysUntilHolidays(calendar)
+                schoolDaysLeft = CalendarCalculator.schoolDaysLeft(calendar)
+            }
         }
 
         provideContent {
@@ -55,24 +62,38 @@ object Widget: GlanceAppWidget() {
                         .padding(vertical = 16.dp, horizontal = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalAlignment = Alignment.CenterHorizontally
+
                 ) {
-                    Box(
-                        modifier = GlanceModifier.defaultWeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    if(calendar == null || isCalendarToOld) {
                         Text(
-                            text = daysUntilHolidays,
-                            style = NextBreakWidgetTheme.widgetTextStyle.copy(color = NextBreakWidgetTheme.colors.secondary)
+                            text = "No data",
+                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = 30.sp, textAlign = TextAlign.Center)
                         )
                     }
-                    Box(
-                        modifier = GlanceModifier.defaultWeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    else if(CalendarCalculator.isOffDay(calendar)) {
                         Text(
-                            text = schoolDaysLeft,
-                            style = NextBreakWidgetTheme.widgetTextStyle.copy()
+                            text = "Day off!",
+                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = 30.sp, textAlign = TextAlign.Center)
                         )
+                    } else {
+                        Box(
+                            modifier = GlanceModifier.defaultWeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = daysUntilHolidays.toString(),
+                                style = NextBreakWidgetTheme.widgetTextStyle.copy(color = NextBreakWidgetTheme.colors.secondary)
+                            )
+                        }
+                        Box(
+                            modifier = GlanceModifier.defaultWeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = schoolDaysLeft.toString(),
+                                style = NextBreakWidgetTheme.widgetTextStyle.copy()
+                            )
+                        }
                     }
                 }
             }
