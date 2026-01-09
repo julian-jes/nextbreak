@@ -3,6 +3,7 @@ package com.julianjesacher.nextbreak.viewmodel
 import android.app.Application
 import android.net.Uri
 import android.util.Log
+import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.julianjesacher.nextbreak.config.AppConstants
@@ -12,6 +13,7 @@ import com.julianjesacher.nextbreak.data.DownloadCalendarResult
 import com.julianjesacher.nextbreak.data.VersionRepository
 import com.julianjesacher.nextbreak.domain.CalendarCalculator
 import com.julianjesacher.nextbreak.models.Calendar
+import com.julianjesacher.nextbreak.ui.widgets.Widget
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -169,6 +171,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     private suspend fun setCalendarUI(calendar: Calendar) {
+
+        Widget.updateAll(appContext)
 
         if(CalendarCalculator.isCalendarToOld()) {
             _showNoDataScreen.value = true

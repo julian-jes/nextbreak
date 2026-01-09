@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.julianjesacher.nextbreak"
-        minSdk = 23
+        minSdk = 31
         targetSdk = 36
         versionCode = 2
         versionName = "1.0.1"
@@ -21,6 +21,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue(
+                "string",
+                "app_name",
+                "Next Break Debug"
+            )
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -57,6 +66,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,4 +78,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
+    implementation("androidx.glance:glance:1.1.1")
+    implementation("androidx.glance:glance-appwidget:1.1.1")
+    implementation("androidx.glance:glance-material3:1.1.1")
 }
