@@ -22,9 +22,9 @@ object CalendarCalculator {
         return days
     }
 
-    fun daysUntilHolidays(calendar: Calendar): Int {
+    fun daysUntilHolidays(calendar: Calendar, holidayIndex: Int): Int {
         val startIndex = currentDayIndex(calendar)
-        val holidayStart = nextHolidayStart(calendar)
+        val holidayStart = holidayStartOfIndex(calendar, holidayIndex)
         var days = 0
 
         for(i in startIndex..< calendar.calendar.size) {
@@ -38,6 +38,16 @@ object CalendarCalculator {
         }
 
         return days
+    }
+
+    private fun holidayStartOfIndex(calendar: Calendar, holidayIndex: Int): String {
+        return when(holidayIndex) {
+            0 -> calendar.autumnBreakStart
+            1 -> calendar.winterBreakStart
+            2 -> calendar.carnivalBreakStart
+            3 -> calendar.easterBreakStart
+            else -> summerBreakStart(calendar)
+        }
     }
 
     fun schoolDaysLeft(calendar: Calendar): Int {
@@ -68,23 +78,23 @@ object CalendarCalculator {
         return 1 - schoolDaysLeft(calendar).toFloat() / totalSchoolDays
     }
 
-    private fun nextHolidayStart(calendar: Calendar): String {
+    fun nextHolidayIndex(calendar: Calendar): Int {
         val currentDate = LocalDate.now()
 
         if (currentDate.isBefore(LocalDate.parse(calendar.autumnBreakStart))) {
-            return calendar.autumnBreakStart
+            return 0
         }
         if (currentDate.isBefore(LocalDate.parse(calendar.winterBreakStart))) {
-            return calendar.winterBreakStart
+            return 1
         }
         if (currentDate.isBefore(LocalDate.parse(calendar.carnivalBreakStart))) {
-            return calendar.carnivalBreakStart
+            return 2
         }
         if (currentDate.isBefore(LocalDate.parse(calendar.easterBreakStart))) {
-            return calendar.easterBreakStart
+            return 3
         }
 
-        return summerBreakStart(calendar)
+        return 4
     }
 
     suspend fun isCalendarToOld(): Boolean {
@@ -94,13 +104,12 @@ object CalendarCalculator {
         return currentDate.monthValue >= 9 && currentDate.year > version.year
     }
 
-    fun holidayName(calendar: Calendar): String {
-        val holidayStart = nextHolidayStart(calendar)
-        return when(holidayStart) {
-            calendar.autumnBreakStart -> "autumn"
-            calendar.winterBreakStart -> "winter"
-            calendar.carnivalBreakStart -> "carnival"
-            calendar.easterBreakStart -> "easter"
+    fun holidayName(holidayIndex: Int): String {
+        return when(holidayIndex) {
+            0 -> "autumn"
+            1 -> "winter"
+            2 -> "carnival"
+            3 -> "easter"
             else -> "summer"
         }
     }

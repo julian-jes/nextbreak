@@ -24,10 +24,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val appContext = getApplication<Application>()
 
-    private var _daysUntilHolidays = MutableStateFlow("-")
+    private var _daysUntilHolidays = MutableStateFlow(List(1) {"-"})
     val daysUntilHolidays = _daysUntilHolidays.asStateFlow()
 
-    private var _daysUntilHolidaysText = MutableStateFlow("")
+    private var _daysUntilHolidaysText = MutableStateFlow(List(1) {""})
     val daysUntilHolidaysText = _daysUntilHolidaysText.asStateFlow()
 
     private var _nextDayOffText = MutableStateFlow("-")
@@ -194,13 +194,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             _nextDayOffText.value = "Next day off in $nextDayOff days"
         }
 
-        _daysUntilHolidays.value = CalendarCalculator.daysUntilHolidays(calendar).toString()
-        var holidaysUnit = "days"
-        val holidayName = CalendarCalculator.holidayName(calendar)
-        if(_daysUntilHolidays.value.toInt() == 1) {
-            holidaysUnit = "day"
+
+        val newDaysUntilHolidays = mutableListOf<String>()
+        val newDaysUntilHolidaysText = mutableListOf<String>()
+        val nextHolidayIndex = CalendarCalculator.nextHolidayIndex(calendar)
+
+        for (i in nextHolidayIndex..< 5)
+        {
+            newDaysUntilHolidays.add(CalendarCalculator.daysUntilHolidays(calendar, i).toString())
+            var holidaysUnit = "days"
+            val holidayName = CalendarCalculator.holidayName(i)
+            if(newDaysUntilHolidays[newDaysUntilHolidays.size - 1].toInt() == 1) {
+                holidaysUnit = "day"
+            }
+            newDaysUntilHolidaysText.add("school $holidaysUnit until\n$holidayName break")
         }
-        _daysUntilHolidaysText.value = "school $holidaysUnit until\n$holidayName break"
+
+        _daysUntilHolidays.value = newDaysUntilHolidays
+        _daysUntilHolidaysText.value = newDaysUntilHolidaysText
+
 
         val schoolDaysLeft = CalendarCalculator.schoolDaysLeft(calendar)
         if (schoolDaysLeft == 1) {

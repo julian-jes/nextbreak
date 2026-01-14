@@ -1,12 +1,14 @@
 package com.julianjesacher.nextbreak.ui.widgets
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
+import androidx.glance.LocalSize
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -23,6 +25,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import com.julianjesacher.nextbreak.MainActivity
 import com.julianjesacher.nextbreak.R
+import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.data.CalendarRepository
 import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.domain.CalendarCalculator
@@ -30,7 +33,7 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakWidgetTheme
 
 object Widget: GlanceAppWidget() {
 
-    override val sizeMode: SizeMode = SizeMode.Single
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(
         context: Context,
@@ -42,18 +45,19 @@ object Widget: GlanceAppWidget() {
         var daysUntilHolidays = 0
         var schoolDaysLeft = 0
         var isCalendarToOld = false
-
         if(calendar != null) {
             isCalendarToOld = CalendarCalculator.isCalendarToOld()
 
             if(!CalendarCalculator.isOffDay(calendar)) {
-                daysUntilHolidays = CalendarCalculator.daysUntilHolidays(calendar)
+                val holidayIndex = CalendarCalculator.nextHolidayIndex(calendar)
+                daysUntilHolidays = CalendarCalculator.daysUntilHolidays(calendar, holidayIndex)
                 schoolDaysLeft = CalendarCalculator.schoolDaysLeft(calendar)
             }
         }
 
         provideContent {
             GlanceTheme(colors = NextBreakWidgetTheme.colors) {
+                Log.d(AppConstants.LOG_TAG, LocalSize.current.toString())
                 Row(
                     modifier = GlanceModifier
                         .fillMaxSize()

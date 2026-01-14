@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
@@ -41,6 +43,26 @@ fun BaseScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        TextButton(
+            onClick = {},
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .padding(end = 10.dp, start = 10.dp)
+        ) {
+            Text(
+                text = "Update",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 21.sp
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = Icons.Default.Download,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
