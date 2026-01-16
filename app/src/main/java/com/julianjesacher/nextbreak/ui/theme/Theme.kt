@@ -1,5 +1,6 @@
 package com.julianjesacher.nextbreak.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -9,7 +10,6 @@ import androidx.glance.text.FontFamily
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.julianjesacher.nextbreak.R
 import com.julianjesacher.nextbreak.ui.SystemBars
 
 private val AppColorScheme = darkColorScheme(
@@ -28,6 +28,7 @@ object NextBreakWidgetTheme {
         dark = AppColorScheme
     )
 
+    @SuppressLint("RestrictedApi")
     val widgetTextStyle = TextStyle(
         color = ColorProvider(ContentPrimary),
         fontWeight = FontWeight.Bold,

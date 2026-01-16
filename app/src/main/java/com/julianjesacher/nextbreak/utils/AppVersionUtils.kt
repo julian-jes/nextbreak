@@ -3,13 +3,7 @@ package com.julianjesacher.nextbreak.utils
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import com.google.gson.Gson
-import com.julianjesacher.nextbreak.config.AppConstants
-import com.julianjesacher.nextbreak.data.DownloadCalendarResult
-import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.data.RetrofitInstance
-import com.julianjesacher.nextbreak.models.AppRelease
-import com.julianjesacher.nextbreak.models.Calendar
 import okio.IOException
 import retrofit2.HttpException
 
