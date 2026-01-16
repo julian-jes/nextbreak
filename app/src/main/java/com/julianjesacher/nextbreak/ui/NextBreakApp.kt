@@ -9,7 +9,7 @@ import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 @Composable
 fun NextBreakApp(viewModel: MainViewModel) {
 
-    val isSchoolDay by viewModel.isSchoolDay.collectAsState()
+    val isSummerHoliday by viewModel.isSummerHoliday.collectAsState()
     val isAboutDialogOpen by viewModel.isAboutDialogOpen.collectAsState()
     val showLoadingOverlay by viewModel.showLoadingOverlay.collectAsState()
     val showNoDataScreen by viewModel.showNoDataScreen.collectAsState()
@@ -18,10 +18,10 @@ fun NextBreakApp(viewModel: MainViewModel) {
         NoDataScreen(viewModel)
     }
     else {
-        if(isSchoolDay) {
-            MainScreen(viewModel)
+        if(isSummerHoliday) {
+            SummerHolidayScreen(viewModel)
         } else {
-            DayOffScreen(viewModel)
+            MainScreen(viewModel)
         }
     }
 

@@ -57,7 +57,7 @@ object Widget: GlanceAppWidget() {
 
         provideContent {
             GlanceTheme(colors = NextBreakWidgetTheme.colors) {
-                Log.d(AppConstants.LOG_TAG, LocalSize.current.toString())
+                //Log.d(AppConstants.LOG_TAG, LocalSize.current.toString())
                 Row(
                     modifier = GlanceModifier
                         .fillMaxSize()

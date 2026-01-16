@@ -49,6 +49,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val nextDayOff by viewModel.nextDayOffText.collectAsState()
     val schoolDaysLeft by viewModel.schoolDaysLeftText.collectAsState()
     val schoolYearProgress by viewModel.schoolYearProgress.collectAsState()
+    val isHoliday by viewModel.isHoliday.collectAsState()
 
     val refreshButtonText by viewModel.refreshButtonText.collectAsState()
     val showUpdateButton by viewModel.showUpdateButton.collectAsState()
@@ -85,23 +86,34 @@ fun MainScreen(viewModel: MainViewModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 5.dp)
+                        .padding(top = 5.dp, start = 20.dp, end = 20.dp)
                         .align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(
-                        text = daysUntilHolidays[page],
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 100.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = daysUntilHolidaysText[page],
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 30.sp,
-                        lineHeight = 35.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    if(isHoliday && page == 0) {
+                        Text(
+                            text = daysUntilHolidaysText[page],
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 50.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    else {
+                        Text(
+                            text = daysUntilHolidays[page],
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 100.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = daysUntilHolidaysText[page],
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 30.sp,
+                            lineHeight = 35.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
             Row(

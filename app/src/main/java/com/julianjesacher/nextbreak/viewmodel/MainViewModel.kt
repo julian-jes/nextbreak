@@ -3,6 +3,7 @@ package com.julianjesacher.nextbreak.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
@@ -42,8 +43,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _schoolYearProgress = MutableStateFlow(0f)
     val schoolYearProgress = _schoolYearProgress.asStateFlow()
 
-    private var _isSchoolDay = MutableStateFlow(true)
-    val isSchoolDay = _isSchoolDay.asStateFlow()
+    private var _isSummerHoliday = MutableStateFlow(false)
+    val isSummerHoliday = _isSummerHoliday.asStateFlow()
 
     private var _isAboutDialogOpen = MutableStateFlow(false)
     val isAboutDialogOpen = _isAboutDialogOpen.asStateFlow()
@@ -62,6 +63,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private var _showUpdateButton = MutableStateFlow(false)
     val showUpdateButton = _showUpdateButton.asStateFlow()
+
+    private var _isHoliday = MutableStateFlow(false)
+    val isHoliday = _isHoliday.asStateFlow()
 
     private var latestReleaseUrl = ""
 
@@ -187,23 +191,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
         _showNoDataScreen.value = false
 
-        if(CalendarCalculator.isOffDay(calendar)) {
-            _isSchoolDay.value = false
+        if(CalendarCalculator.isSummerHoliday(calendar)) {
+            _isSummerHoliday.value = true
             return
         }
 
-        val nextDayOff = CalendarCalculator.daysUntilNextDayOff(calendar)
-        if (nextDayOff == 1) {
-            _nextDayOffText.value = "Next day off in $nextDayOff day"
-        }
-        else {
-            _nextDayOffText.value = "Next day off in $nextDayOff days"
+        when (val nextDayOff = CalendarCalculator.daysUntilNextDayOff(calendar)) {
+            0 -> {
+                _nextDayOffText.value = "No school today!"
+            }
+            1 -> {
+                _nextDayOffText.value = "Next day off in $nextDayOff day"
+            }
+            else -> {
+                _nextDayOffText.value = "Next day off in $nextDayOff days"
+            }
         }
 
 
         val newDaysUntilHolidays = mutableListOf<String>()
         val newDaysUntilHolidaysText = mutableListOf<String>()
         val nextHolidayIndex = CalendarCalculator.nextHolidayIndex(calendar)
+
+        _isHoliday.value = CalendarCalculator.isHoliday(calendar)
+        if(_isHoliday.value) {
+            val holidayName = CalendarCalculator.holidayName(nextHolidayIndex - 1)
+            newDaysUntilHolidays.add("")
+            newDaysUntilHolidaysText.add("Enjoy your $holidayName break!")
+        }
 
         for (i in nextHolidayIndex..< 5)
         {

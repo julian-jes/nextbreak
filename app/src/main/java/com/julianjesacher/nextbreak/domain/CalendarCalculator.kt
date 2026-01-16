@@ -10,6 +10,39 @@ object CalendarCalculator {
         return index == -1 || !calendar.calendar[index].isSchoolDay
     }
 
+    fun isHoliday(calendar: Calendar): Boolean {
+        val holidayIndex = nextHolidayIndex(calendar) - 1
+        val currentDayIndex = currentDayIndex(calendar)
+
+        if(holidayIndex == -1) {
+            return false
+        }
+
+        val holidayStart = holidayStartOfIndex(calendar, holidayIndex)
+        val startIndex = calendar.calendar.indexOfFirst {
+            it.date == holidayStart
+        }
+
+        for (i in startIndex..currentDayIndex) {
+            if(calendar.calendar[i].isSchoolDay) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    suspend fun isSummerHoliday(calendar: Calendar): Boolean {
+        val version = VersionRepository.getLocalVersion() ?: return false
+        val localDate = LocalDate.now()
+
+        return if(version.year >= localDate.year) {
+            localDate.isBefore(LocalDate.parse(calendar.calendar[0].date))
+        } else {
+            localDate.isAfter(LocalDate.parse(calendar.calendar[calendar.calendar.size - 1].date))
+        }
+    }
+
     fun daysUntilNextDayOff(calendar: Calendar): Int {
         val startIndex = currentDayIndex(calendar)
         var days = 0
