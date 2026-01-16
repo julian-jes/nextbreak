@@ -8,7 +8,11 @@ object AppConstants {
     const val SOURCE_CODE_URL = "https://github.com/julian-jes/nextbreak"
     const val LOG_TAG = "Next Break Logs"
 
+    const val CHECK_UPDATE_INTERVAL_FILE_NAME = "check_update_interval.json"
+    const val CHECK_UPDATE_INTERVAL = 4 * 60 * 60 * 1000L
+
     const val RETROFIT_BASE_URL = "https://julian-jes.github.io"
     const val CALENDAR_URL = "/nextbreak-data/data.json"
     const val VERSION_URL = "/nextbreak-data/version.json"
+    const val APP_RELEASE_URL = "https://api.github.com/repos/julian-jes/nextbreak/releases/latest"
 }

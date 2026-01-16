@@ -1,8 +1,9 @@
 package com.julianjesacher.nextbreak.viewmodel
 
 import android.app.Application
+import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,11 +11,13 @@ import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.data.CalendarRepository
 import com.julianjesacher.nextbreak.data.CheckVersionResult
 import com.julianjesacher.nextbreak.data.DownloadCalendarResult
+import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.data.VersionRepository
 import com.julianjesacher.nextbreak.domain.CalendarCalculator
 import com.julianjesacher.nextbreak.models.Calendar
 import com.julianjesacher.nextbreak.ui.widgets.Widget
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
+import com.julianjesacher.nextbreak.utils.CheckUpdatesResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,6 +60,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _showNoDataScreen = MutableStateFlow(false)
     val showNoDataScreen = _showNoDataScreen.asStateFlow()
 
+    private var _showUpdateButton = MutableStateFlow(false)
+    val showUpdateButton = _showUpdateButton.asStateFlow()
+
+    private var latestReleaseUrl = ""
+
     fun setAboutDialog(isOpen: Boolean) {
         _isAboutDialogOpen.value = isOpen
     }
@@ -70,6 +78,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             if(!loadedLocalCalendar && errorWhileLoading) {
                 _showNoDataScreen.value = true
             }
+
+            checkForUpdates()
         }
     }
 
@@ -102,7 +112,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     private suspend fun updateVersionInfo() {
-        val appVersion = AppVersionUtils.getAppVersion(appContext)
+        val appVersion = AppVersionUtils.getLocalVersion(appContext)
         val dataVersion = VersionRepository.getLocalVersion()
 
         var dataVersionText = "-"
@@ -133,13 +143,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             DownloadCalendarResult.Error -> {
                 _refreshButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
-                Log.e(AppConstants.LOG_TAG, "Error downloading calendar, error happened!")
                 null
             }
             DownloadCalendarResult.NoInternet -> {
                 _refreshButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
-                Log.e(AppConstants.LOG_TAG, "Error downloading calendar no internet!")
                 null
             }
             is DownloadCalendarResult.Success -> {
@@ -154,13 +162,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             CheckVersionResult.Error -> {
                 _refreshButtonText.value = "Network Error"
                 _showLoadingOverlay.value = false
-                Log.e(AppConstants.LOG_TAG, "Error checking version, error happened!")
                 null
             }
             CheckVersionResult.NoInternet -> {
                 _refreshButtonText.value = "No Internet"
                 _showLoadingOverlay.value = false
-                Log.e(AppConstants.LOG_TAG, "Error checking version, no internet!")
                 null
             }
             is CheckVersionResult.Success -> {
@@ -225,5 +231,42 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         _schoolYearProgress.value = CalendarCalculator.schoolYearProgress(calendar)
     }
 
+    private suspend fun checkForUpdates() {
+        _showLoadingOverlay.value = true
+        val lastCheck = FileManager.loadFile(AppConstants.CHECK_UPDATE_INTERVAL_FILE_NAME)?.toLong()
+        val currentTime = System.currentTimeMillis()
+
+        if(lastCheck != null && (currentTime - lastCheck) < AppConstants.CHECK_UPDATE_INTERVAL) {
+            _showLoadingOverlay.value = false
+            return
+        }
+
+        FileManager.saveFile(AppConstants.CHECK_UPDATE_INTERVAL_FILE_NAME, currentTime.toString())
+
+        when (val result = AppVersionUtils.checkForUpdates(appContext)) {
+            CheckUpdatesResult.Error -> {
+                _refreshButtonText.value = "Network Error"
+                _showLoadingOverlay.value = false
+            }
+            CheckUpdatesResult.NoInternet -> {
+                _refreshButtonText.value = "No Internet"
+                _showLoadingOverlay.value = false
+            }
+            is CheckUpdatesResult.Success -> {
+                _refreshButtonText.value = null
+                _showLoadingOverlay.value = false
+                _showUpdateButton.value = result.updateAvailable
+                latestReleaseUrl = result.releaseUrl
+            }
+        }
+
+    }
+
+    fun openReleasesUrl() {
+        val intent = Intent(Intent.ACTION_VIEW, latestReleaseUrl.toUri()).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
+    }
 
 }

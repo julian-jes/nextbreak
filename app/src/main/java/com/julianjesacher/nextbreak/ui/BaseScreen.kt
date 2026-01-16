@@ -17,6 +17,8 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SystemUpdate
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,8 @@ import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 fun BaseScreen(
     onInfoClick: () -> Unit,
     onRetryClick: () -> Unit,
+    onUpdateClick: () -> Unit,
+    showUpdateButton: Boolean,
     refreshButtonText: String?,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -43,26 +47,7 @@ fun BaseScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        TextButton(
-            onClick = {},
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .statusBarsPadding()
-                .padding(end = 10.dp, start = 10.dp)
-        ) {
-            Text(
-                text = "Update",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 21.sp
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                imageVector = Icons.Default.Download,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(28.dp)
-            )
-        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,6 +56,25 @@ fun BaseScreen(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if(showUpdateButton) {
+                TextButton(onClick = onUpdateClick) {
+                    Text(
+                        text = "Update",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 21.sp
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.SystemUpdate,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
             if(refreshButtonText != null) {
                 TextButton(onClick = onRetryClick) {
                     Text(
@@ -123,6 +127,8 @@ fun BaseScreenPreview() {
         BaseScreen(
             onInfoClick = {},
             onRetryClick = {},
+            onUpdateClick = {},
+            showUpdateButton = true,
             refreshButtonText = "No Internet"
         ) { }
     }

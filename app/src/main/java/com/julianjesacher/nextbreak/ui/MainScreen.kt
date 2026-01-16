@@ -2,7 +2,6 @@ package com.julianjesacher.nextbreak.ui
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.ui.components.PagePillIndicator
 import com.julianjesacher.nextbreak.ui.theme.NextBreakTheme
 import com.julianjesacher.nextbreak.viewmodel.MainViewModel
@@ -51,9 +49,11 @@ fun MainScreen(viewModel: MainViewModel) {
     val nextDayOff by viewModel.nextDayOffText.collectAsState()
     val schoolDaysLeft by viewModel.schoolDaysLeftText.collectAsState()
     val schoolYearProgress by viewModel.schoolYearProgress.collectAsState()
-    val refreshButtonText by viewModel.refreshButtonText.collectAsState()
 
-    val pagerState = rememberPagerState() { daysUntilHolidays.size }
+    val refreshButtonText by viewModel.refreshButtonText.collectAsState()
+    val showUpdateButton by viewModel.showUpdateButton.collectAsState()
+
+    val pagerState = rememberPagerState { daysUntilHolidays.size }
     val scope = rememberCoroutineScope()
 
     BaseScreen(
@@ -63,6 +63,10 @@ fun MainScreen(viewModel: MainViewModel) {
         onRetryClick = {
             viewModel.retryLoadingOnlineData()
         },
+        onUpdateClick = {
+            viewModel.openReleasesUrl()
+        },
+        showUpdateButton = showUpdateButton,
         refreshButtonText = refreshButtonText
     ) {
         Box (
@@ -78,7 +82,6 @@ fun MainScreen(viewModel: MainViewModel) {
                     .fillMaxSize()
                     .padding(bottom = 155.dp, top = 100.dp)
             ) { page ->
-                Log.d(AppConstants.LOG_TAG, page.toString())
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

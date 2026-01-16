@@ -27,6 +27,7 @@ import com.julianjesacher.nextbreak.viewmodel.MainViewModel
 fun DayOffScreen(viewModel: MainViewModel) {
 
     val refreshButtonText by viewModel.refreshButtonText.collectAsState()
+    val showUpdateButton by viewModel.showUpdateButton.collectAsState()
 
     BaseScreen(
         onInfoClick = {
@@ -35,6 +36,10 @@ fun DayOffScreen(viewModel: MainViewModel) {
         onRetryClick = {
             viewModel.retryLoadingOnlineData()
         },
+        onUpdateClick = {
+            viewModel.openReleasesUrl()
+        },
+        showUpdateButton = showUpdateButton,
         refreshButtonText = refreshButtonText
     ) {
         Column(

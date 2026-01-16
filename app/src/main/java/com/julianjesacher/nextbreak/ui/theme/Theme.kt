@@ -19,7 +19,7 @@ private val AppColorScheme = darkColorScheme(
     primary = ContentPrimary,
     secondary = ContentSecondary,
     tertiary = ContentTertiary,
-    tertiaryContainer = ContentTertiaryContainer
+    tertiaryContainer = ContentTertiaryContainer,
 )
 
 object NextBreakWidgetTheme {
