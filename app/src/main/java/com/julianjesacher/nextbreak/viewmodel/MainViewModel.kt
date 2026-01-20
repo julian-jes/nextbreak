@@ -3,7 +3,6 @@ package com.julianjesacher.nextbreak.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
