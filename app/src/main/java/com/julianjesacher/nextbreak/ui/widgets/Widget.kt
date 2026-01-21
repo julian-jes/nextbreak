@@ -1,7 +1,6 @@
 package com.julianjesacher.nextbreak.ui.widgets
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +24,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import com.julianjesacher.nextbreak.MainActivity
 import com.julianjesacher.nextbreak.R
-import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.data.CalendarRepository
 import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.domain.CalendarCalculator
@@ -64,58 +62,71 @@ object Widget: GlanceAppWidget() {
 
         provideContent {
             GlanceTheme(colors = NextBreakWidgetTheme.colors) {
-                Log.d(AppConstants.LOG_TAG, LocalSize.current.toString())
                 val size = LocalSize.current
                 val isTall = size.height >= 140.dp
 
-                var detailLevel = DetailLevel.MINIMAL
-                var fontSize = NextBreakWidgetTheme.widgetTextStyle.fontSize
+                var widgetTextDetailLevel = DetailLevel.MINIMAL
+                var widgetTextFontSize = NextBreakWidgetTheme.widgetTextStyle.fontSize
 
 
-                var statusTextFontSize = 35
-                var statusTextDetailLevel = DetailLevel.MINIMAL
+                var noDataTextDetailLevel = DetailLevel.MINIMAL
+                var noDataTextFontSize = NextBreakWidgetTheme.widgetTextStyle.fontSize
+
+                var summerTextDetailLevel = DetailLevel.MINIMAL
+                var summerTextFontSize = 30.sp
 
                 if(!isTall) {
                     if(size.width >= 200.dp && size.width < 300.dp) {
-                        fontSize = 35.sp
+                        widgetTextFontSize = 35.sp
+                        noDataTextFontSize = 35.sp
+                        summerTextDetailLevel = DetailLevel.SHORT
                     }
                     else if(size.width >= 300.dp) {
-                        detailLevel = DetailLevel.SHORT
-                        statusTextDetailLevel = DetailLevel.SHORT
+                        widgetTextDetailLevel = DetailLevel.SHORT
+                        noDataTextDetailLevel = DetailLevel.SHORT
+                        summerTextDetailLevel = DetailLevel.SHORT
+                        summerTextFontSize = 35.sp
                     }
                 }
                 else {
                     if(size.width < 200.dp) {
-                        fontSize = 45.sp
+                        widgetTextFontSize = 45.sp
+                        noDataTextFontSize = 43.sp
+                        summerTextDetailLevel = DetailLevel.SHORT
+                        summerTextFontSize = 32.sp
                     }
                     else if(size.width < 300.dp) {
-                        fontSize = 38.sp
-                        detailLevel = DetailLevel.SHORT
+                        widgetTextFontSize = 36.sp
+                        widgetTextDetailLevel = DetailLevel.SHORT
+                        noDataTextFontSize = 43.sp
+                        summerTextDetailLevel = DetailLevel.FULL
+                        summerTextFontSize = 35.sp
                     }
                     else {
-                        fontSize = 38.sp
-                        detailLevel = DetailLevel.FULL
-                        statusTextDetailLevel = DetailLevel.FULL
+                        widgetTextFontSize = 36.sp
+                        widgetTextDetailLevel = DetailLevel.FULL
+                        noDataTextDetailLevel = DetailLevel.FULL
+                        noDataTextFontSize = 35.sp
+                        summerTextDetailLevel = DetailLevel.FULL
+                        summerTextFontSize = 38.sp
                     }
                 }
-
-                Log.d(AppConstants.LOG_TAG, statusTextDetailLevel.toString())
 
                 val holidayText = @Composable {
                     WidgetText(
                         days = daysUntilHolidays,
                         shortLabel = "Break: ",
                         fullLabel = "Next break: ",
-                        level = detailLevel,
-                        style = NextBreakWidgetTheme.widgetTextStyle.copy(color = NextBreakWidgetTheme.colors.secondary, fontSize = fontSize)
+                        level = widgetTextDetailLevel,
+                        style = NextBreakWidgetTheme.widgetTextStyle.copy(color = NextBreakWidgetTheme.colors.secondary, fontSize = widgetTextFontSize)
                     )
                 }
                 val totalText = @Composable {
                     WidgetText(days = schoolDaysLeft.toString(),
                         shortLabel = "Total: ",
                         fullLabel = "Total left: ",
-                        level = detailLevel,
-                        style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = fontSize)
+                        level = widgetTextDetailLevel,
+                        style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = widgetTextFontSize)
                     )
                 }
 
@@ -127,22 +138,22 @@ object Widget: GlanceAppWidget() {
                         .padding(vertical = 16.dp, horizontal = 5.dp)
                 ) {
 
-                    if(calendar == null || isCalendarToOld || true) {
+                    if(calendar == null || isCalendarToOld) {
                         WidgetStatusText(
                             shortLabel = "No data",
                             fullLabel = "No data available",
                             description = "Unable to load data.",
-                            level = statusTextDetailLevel,
-                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = statusTextFontSize.sp)
+                            level = noDataTextDetailLevel,
+                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = noDataTextFontSize)
                         )
                     }
                     else if(isSummerHoliday) {
                         WidgetStatusText(
-                            shortLabel = "It's summer!",
-                            fullLabel = "",
+                            shortLabel = "Summer!",
+                            fullLabel = "It's summer!",
                             description = "Relax, bro.",
-                            level = statusTextDetailLevel,
-                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = statusTextFontSize.sp)
+                            level = summerTextDetailLevel,
+                            style = NextBreakWidgetTheme.widgetTextStyle.copy(fontSize = summerTextFontSize)
                         )
                     }
                     else {

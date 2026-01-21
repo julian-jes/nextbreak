@@ -80,6 +80,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
             if(!loadedLocalCalendar && errorWhileLoading) {
                 _showNoDataScreen.value = true
+                Widget.updateAll(appContext)
             }
 
             checkForUpdates()

@@ -5,12 +5,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.height
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.julianjesacher.nextbreak.ui.theme.NextBreakWidgetTheme
 
@@ -51,10 +51,10 @@ fun WidgetStatusText(
     style: TextStyle = NextBreakWidgetTheme.widgetTextStyle.copy(),
     modifier: GlanceModifier = GlanceModifier
 ) {
+    val baseFontSize = style.fontSize?.value ?: 32f
+    val descriptionFontSize = (baseFontSize - 5).sp
 
     var label = shortLabel
-    val baseSize = style.fontSize?.value ?: 16f
-    val test = (baseSize - 5).sp
     if(level != DetailLevel.MINIMAL) {
         label = fullLabel
     }
@@ -66,7 +66,10 @@ fun WidgetStatusText(
     ) {
         Text(
             text = label,
-            style = style.copy(color = NextBreakWidgetTheme.colors.primary),
+            style = style.copy(
+                color = NextBreakWidgetTheme.colors.primary,
+                textAlign = TextAlign.Center
+            ),
             modifier = modifier
         )
 
@@ -74,7 +77,11 @@ fun WidgetStatusText(
             Spacer(GlanceModifier.height(10.dp))
             Text(
                 text = description,
-                style = style.copy(color = NextBreakWidgetTheme.colors.secondary, fontSize = test),
+                style = style.copy(
+                    color = NextBreakWidgetTheme.colors.secondary,
+                    fontSize = descriptionFontSize,
+                    textAlign = TextAlign.Center
+                ),
                 modifier = modifier
             )
         }
