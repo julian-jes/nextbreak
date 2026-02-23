@@ -29,5 +29,5 @@ fun NextBreakApp(viewModel: MainViewModel) {
         AboutDialog(viewModel)
     }
 
-    LoadingOverlay(showLoadingOverlay)
+    //LoadingOverlay(showLoadingOverlay)
 }

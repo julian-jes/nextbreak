@@ -3,6 +3,7 @@ package com.julianjesacher.nextbreak.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
@@ -19,6 +20,7 @@ import com.julianjesacher.nextbreak.ui.widgets.Widget
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import com.julianjesacher.nextbreak.utils.CheckUpdatesResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -130,7 +132,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private suspend fun loadLocalCalendar(): Boolean {
         _showLoadingOverlay.value = true
         val calendar = CalendarRepository.loadLocalCalendar()
-
         if(calendar != null) {
             setCalendarUI(calendar)
             updateVersionInfo()

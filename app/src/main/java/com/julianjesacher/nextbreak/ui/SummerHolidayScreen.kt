@@ -40,6 +40,8 @@ fun SummerHolidayScreen(viewModel: MainViewModel) {
             viewModel.openReleasesUrl()
         },
         showUpdateButton = showUpdateButton,
+        isRefreshing = false,
+        onRefresh = {},
         refreshButtonText = refreshButtonText
     ) {
         Column(

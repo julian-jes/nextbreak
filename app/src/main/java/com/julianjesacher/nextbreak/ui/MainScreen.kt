@@ -24,12 +24,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +58,8 @@ fun MainScreen(viewModel: MainViewModel) {
     val schoolYearProgress by viewModel.schoolYearProgress.collectAsState()
     val isHoliday by viewModel.isHoliday.collectAsState()
 
+    val isRefreshing by viewModel.showLoadingOverlay.collectAsState()
+
     val refreshButtonText by viewModel.refreshButtonText.collectAsState()
     val showUpdateButton by viewModel.showUpdateButton.collectAsState()
 
@@ -68,6 +77,10 @@ fun MainScreen(viewModel: MainViewModel) {
             viewModel.openReleasesUrl()
         },
         showUpdateButton = showUpdateButton,
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            viewModel.loadData()
+        },
         refreshButtonText = refreshButtonText
     ) {
         Box (
@@ -76,6 +89,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 .statusBarsPadding()
                 .padding(bottom = 170.dp),
         ) {
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier

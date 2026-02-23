@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
@@ -21,6 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,83 +42,109 @@ fun BaseScreen(
     onUpdateClick: () -> Unit,
     showUpdateButton: Boolean,
     refreshButtonText: String?,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     content: @Composable BoxScope.() -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+    val state = rememberPullToRefreshState()
+
+    PullToRefreshBox(
+        state = state,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                state = state,
+                isRefreshing = isRefreshing,
+                containerColor = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
     ) {
-
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(end = 10.dp, start = 10.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            if(showUpdateButton) {
-                TextButton(onClick = onUpdateClick) {
-                    Text(
-                        text = "Update",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 21.sp
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.SystemUpdate,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-            }
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(end = 10.dp, start = 10.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if(showUpdateButton) {
+                        TextButton(onClick = onUpdateClick) {
+                            Text(
+                                text = "Update",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 21.sp
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.SystemUpdate,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
 
-            Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
 
-            if(refreshButtonText != null) {
-                TextButton(onClick = onRetryClick) {
-                    Text(
-                        text = refreshButtonText,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 21.sp
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
+                    if(refreshButtonText != null) {
+                        TextButton(onClick = onRetryClick) {
+                            Text(
+                                text = refreshButtonText,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 21.sp
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                    IconButton(onClick = onInfoClick) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(35.dp)
+                        )
+                    }
                 }
-            }
-            IconButton(onClick = onInfoClick) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(35.dp)
+                Text(
+                    text = "Next Break",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 55.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 50.dp)
+                        .statusBarsPadding()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .padding(top = 120.dp),
+                    content = content
                 )
             }
         }
-        Text(
-            text = "Next Break",
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = 55.sp,
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 50.dp)
-                .statusBarsPadding()
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(top = 120.dp),
-            content = content
-        )
     }
 }
 
@@ -126,6 +157,8 @@ fun BaseScreenPreview() {
             onRetryClick = {},
             onUpdateClick = {},
             showUpdateButton = true,
+            isRefreshing = false,
+            onRefresh = {},
             refreshButtonText = "No Internet"
         ) { }
     }
