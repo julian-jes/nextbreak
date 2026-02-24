@@ -3,7 +3,6 @@ package com.julianjesacher.nextbreak.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
@@ -20,7 +19,6 @@ import com.julianjesacher.nextbreak.ui.widgets.Widget
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
 import com.julianjesacher.nextbreak.utils.CheckUpdatesResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -53,8 +51,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     private var _appVersionText = MutableStateFlow("")
     val appVersionText = _appVersionText.asStateFlow()
 
-    private var _showLoadingOverlay = MutableStateFlow(false)
-    val showLoadingOverlay = _showLoadingOverlay.asStateFlow()
+    private var _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     private var _refreshButtonText: MutableStateFlow<String?> = MutableStateFlow(null)
     val refreshButtonText = _refreshButtonText.asStateFlow()
@@ -70,28 +68,50 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private var latestReleaseUrl = ""
 
+    private var lastRefreshTime = 0L
+
     fun setAboutDialog(isOpen: Boolean) {
         _isAboutDialogOpen.value = isOpen
     }
 
     fun loadData(){
+
+        if(_isRefreshing.value || (System.currentTimeMillis() - lastRefreshTime) <= 1000) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
+            _isRefreshing.value = true
+
             updateVersionInfo()
             val loadedLocalCalendar = loadLocalCalendar()
-            val errorWhileLoading = loadOnlineData(!loadedLocalCalendar)
-
+            val errorWhileLoading = loadOnlineData()
             if(!loadedLocalCalendar && errorWhileLoading) {
                 _showNoDataScreen.value = true
                 Widget.updateAll(appContext)
             }
 
             checkForUpdates()
+
+            lastRefreshTime = System.currentTimeMillis()
+            _isRefreshing.value = false
         }
+
     }
 
     fun retryLoadingOnlineData() {
+
+        if(_isRefreshing.value || (System.currentTimeMillis() - lastRefreshTime) <= 1000) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            loadOnlineData(true)
+            _isRefreshing.value = true
+
+            loadOnlineData()
+
+            lastRefreshTime = System.currentTimeMillis()
+            _isRefreshing.value = false
         }
     }
 
@@ -99,13 +119,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         return "${AppConstants.FEEDBACK_BASE_URL}${AppConstants.FEEDBACK_ENTRY}${Uri.encode(_appVersionText.value)}"
     }
 
-    private suspend fun loadOnlineData(loadingOverlayAtStart: Boolean): Boolean {
-        if(loadingOverlayAtStart) _showLoadingOverlay.value = true
+    private suspend fun loadOnlineData(): Boolean {
 
         val result = checkVersion() ?: return true
 
         if(result.updateAvailable) {
-            _showLoadingOverlay.value = true
             val calendar = downloadCalendar() ?: return true
 
             VersionRepository.saveVersionLocally()
@@ -113,7 +131,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             updateVersionInfo()
         }
 
-        _showLoadingOverlay.value = false
         return false
     }
 
@@ -130,16 +147,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     private suspend fun loadLocalCalendar(): Boolean {
-        _showLoadingOverlay.value = true
         val calendar = CalendarRepository.loadLocalCalendar()
         if(calendar != null) {
             setCalendarUI(calendar)
             updateVersionInfo()
-            _showLoadingOverlay.value = false
             return true
         }
 
-        _showLoadingOverlay.value = false
         return false
     }
 
@@ -147,12 +161,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         return when (val result = CalendarRepository.downloadCalendar(appContext)) {
             DownloadCalendarResult.Error -> {
                 _refreshButtonText.value = "Network Error"
-                _showLoadingOverlay.value = false
                 null
             }
             DownloadCalendarResult.NoInternet -> {
                 _refreshButtonText.value = "No Internet"
-                _showLoadingOverlay.value = false
                 null
             }
             is DownloadCalendarResult.Success -> {
@@ -166,12 +178,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         return when (val result = VersionRepository.checkVersion(appContext)) {
             CheckVersionResult.Error -> {
                 _refreshButtonText.value = "Network Error"
-                _showLoadingOverlay.value = false
                 null
             }
             CheckVersionResult.NoInternet -> {
                 _refreshButtonText.value = "No Internet"
-                _showLoadingOverlay.value = false
                 null
             }
             is CheckVersionResult.Success -> {
@@ -248,12 +258,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     private suspend fun checkForUpdates() {
-        _showLoadingOverlay.value = true
         val lastCheck = FileManager.loadFile(AppConstants.CHECK_UPDATE_INTERVAL_FILE_NAME)?.toLong()
         val currentTime = System.currentTimeMillis()
 
         if(lastCheck != null && (currentTime - lastCheck) < AppConstants.CHECK_UPDATE_INTERVAL) {
-            _showLoadingOverlay.value = false
             return
         }
 
@@ -262,15 +270,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         when (val result = AppVersionUtils.checkForUpdates(appContext)) {
             CheckUpdatesResult.Error -> {
                 _refreshButtonText.value = "Network Error"
-                _showLoadingOverlay.value = false
             }
             CheckUpdatesResult.NoInternet -> {
                 _refreshButtonText.value = "No Internet"
-                _showLoadingOverlay.value = false
             }
             is CheckUpdatesResult.Success -> {
                 _refreshButtonText.value = null
-                _showLoadingOverlay.value = false
                 _showUpdateButton.value = result.updateAvailable
                 latestReleaseUrl = result.releaseUrl
             }
