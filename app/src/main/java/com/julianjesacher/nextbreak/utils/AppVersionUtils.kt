@@ -8,7 +8,7 @@ import okio.IOException
 import retrofit2.HttpException
 
 sealed class CheckUpdatesResult {
-    data class Success(val updateAvailable: Boolean, val releaseUrl: String) : CheckUpdatesResult()
+    data class Success(val updateAvailable: Boolean, val releaseUrl: String, val version: List<Int>) : CheckUpdatesResult()
     object NoInternet : CheckUpdatesResult()
     object Error : CheckUpdatesResult()
 }
@@ -50,13 +50,13 @@ object AppVersionUtils {
             val onlineVersionString = appRelease.tagName.replace("v", "")
             val onlineVersion = onlineVersionString.split(".").map { it.toInt() }
 
-            return CheckUpdatesResult.Success(isUpdate(localVersion, onlineVersion), appRelease.url)
+            return CheckUpdatesResult.Success(isUpdate(localVersion, onlineVersion), appRelease.url, onlineVersion)
         } else {
             return CheckUpdatesResult.Error
         }
     }
 
-    private fun isUpdate(localVersion: List<Int>, onlineVersion: List<Int>): Boolean {
+    fun isUpdate(localVersion: List<Int>, onlineVersion: List<Int>): Boolean {
         for (i in 0..< 3) {
 
             for(j in 0..< i) {

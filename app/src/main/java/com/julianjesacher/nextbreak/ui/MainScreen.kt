@@ -88,7 +88,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxSize()
-                    .padding(bottom = 155.dp, top = 100.dp)
+                    .padding(bottom = 155.dp, top = 50.dp)
             ) { page ->
                 Column(
                     modifier = Modifier

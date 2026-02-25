@@ -63,7 +63,11 @@ object VersionRepository {
     suspend fun getLocalVersion(): Version? {
         val jsonString = FileManager.loadFile(AppConstants.VERSION_FILE_NAME)
         if(jsonString != null) {
-            return Gson().fromJson(jsonString, Version::class.java)
+            return try {
+                Gson().fromJson(jsonString, Version::class.java)
+            } catch (e: Exception) {
+                null
+            }
         }
 
         return null

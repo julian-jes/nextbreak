@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.julianjesacher.nextbreak.config.AppConstants
 import com.julianjesacher.nextbreak.data.CalendarRepository
 import com.julianjesacher.nextbreak.data.CheckVersionResult
@@ -14,6 +15,7 @@ import com.julianjesacher.nextbreak.data.DownloadCalendarResult
 import com.julianjesacher.nextbreak.data.FileManager
 import com.julianjesacher.nextbreak.data.VersionRepository
 import com.julianjesacher.nextbreak.domain.CalendarCalculator
+import com.julianjesacher.nextbreak.models.AppUpdateCheck
 import com.julianjesacher.nextbreak.models.Calendar
 import com.julianjesacher.nextbreak.ui.widgets.Widget
 import com.julianjesacher.nextbreak.utils.AppVersionUtils
@@ -258,14 +260,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     private suspend fun checkForUpdates() {
-        val lastCheck = FileManager.loadFile(AppConstants.CHECK_UPDATE_INTERVAL_FILE_NAME)?.toLong()
-        val currentTime = System.currentTimeMillis()
 
-        if(lastCheck != null && (currentTime - lastCheck) < AppConstants.CHECK_UPDATE_INTERVAL) {
-            return
+        val updateCheckJson = FileManager.loadFile(AppConstants.CHECK_UPDATE_FILE_NAME)
+
+        val localVersionString = AppVersionUtils.getLocalVersion(appContext).replace("-debug", "")
+        val localVersion = localVersionString.split(".").map { it.toInt() }
+
+        val updateCheck: AppUpdateCheck = try {
+           Gson().fromJson(updateCheckJson, AppUpdateCheck::class.java)
+        } catch (e: Exception) {
+            AppUpdateCheck(0, localVersion, "")
         }
 
-        FileManager.saveFile(AppConstants.CHECK_UPDATE_INTERVAL_FILE_NAME, currentTime.toString())
+        _showUpdateButton.value = AppVersionUtils.isUpdate(localVersion, updateCheck.lastCheckedVersion)
+        latestReleaseUrl = updateCheck.lastReleaseUrl
+
+        val currentTime = System.currentTimeMillis()
+
+        if((currentTime - updateCheck.lastCheck) < AppConstants.CHECK_UPDATE_INTERVAL) {
+            return
+        }
 
         when (val result = AppVersionUtils.checkForUpdates(appContext)) {
             CheckUpdatesResult.Error -> {
@@ -278,9 +292,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                 _refreshButtonText.value = null
                 _showUpdateButton.value = result.updateAvailable
                 latestReleaseUrl = result.releaseUrl
+                updateCheck.lastReleaseUrl = result.releaseUrl
+                updateCheck.lastCheckedVersion = result.version
             }
         }
 
+        updateCheck.lastCheck = System.currentTimeMillis()
+        FileManager.saveFile(AppConstants.CHECK_UPDATE_FILE_NAME, Gson().toJson(updateCheck))
     }
 
     fun openReleasesUrl() {
