@@ -5,11 +5,6 @@ import com.julianjesacher.nextbreak.models.Calendar
 import java.time.LocalDate
 
 object CalendarCalculator {
-    fun isOffDay(calendar: Calendar): Boolean {
-        val index = currentDayIndex(calendar)
-        return index == -1 || !calendar.calendar[index].isSchoolDay
-    }
-
     fun isHoliday(calendar: Calendar): Boolean {
         val holidayIndex = nextHolidayIndex(calendar) - 1
         val currentDayIndex = currentDayIndex(calendar)
